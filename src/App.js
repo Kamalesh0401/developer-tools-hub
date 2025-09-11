@@ -1,4 +1,4 @@
-// src/App.js
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
 import Layout from './components/layout/Layout';
 import JSONTool from './components/tools/JSONTool';

@@ -1,7 +1,7 @@
-// // src/components/tools/JWTTool.js
 // import React, { useState, useEffect } from 'react';
 // import { Copy, AlertCircle, Key, User, Shield } from 'lucide-react';
 // import { decodeJWT, validateJWT } from '../../utils/jwtUtils';
+// import './JWTTool.css';
 
 // const JWTTool = ({ isDarkMode, showNotification }) => {
 //   const [token, setToken] = useState('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
@@ -68,234 +68,76 @@
 //   }, [token]);
 
 //   return (
-//     <div className="space-y-6">
-//       <div className="flex items-center justify-between">
-//         <div>
-//           <h2 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-//             JWT Decoder
-//           </h2>
-//           <p className="text-gray-500 mt-1">Decode and analyze JSON Web Tokens</p>
-//         </div>
+//     <div className={`jwt-tool ${isDarkMode ? 'dark' : ''}`}>
+//       <div className="title-section">
+//         <h2>JWT Decoder</h2>
+//         <p>Decode and analyze JSON Web Tokens</p>
 //       </div>
 
-//       {/* Input Section */}
-//       <div className="space-y-4">
-//         <div className="flex justify-between items-center">
-//           <span className="text-lg font-semibold flex items-center space-x-2">
-//             <Key className="w-5 h-5" />
-//             <span>JWT Token</span>
-//             {!error && token && (
-//               <span className="text-green-400 text-sm">✓ Valid JWT</span>
-//             )}
+//       <div className="input-section">
+//         <div className="input-header">
+//           <span>
+//             <Key /> JWT Token
+//             {!error && token && <span className="valid">✓ Valid JWT</span>}
 //           </span>
-//           <button
-//             onClick={handleDecode}
-//             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
-//           >
-//             Decode
-//           </button>
+//           <button onClick={handleDecode}>Decode</button>
 //         </div>
-
-//         <div className="relative">
-//           <textarea
-//             value={token}
-//             onChange={(e) => setToken(e.target.value)}
-//             className={`w-full h-32 p-4 rounded-lg border font-mono text-sm resize-none ${
-//               isDarkMode
-//                 ? 'bg-gray-800 border-gray-600 text-white focus:border-blue-500'
-//                 : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
-//             } focus:ring-2 focus:ring-blue-500/20 transition-all duration-200`}
-//             placeholder="Paste your JWT token here..."
-//           />
-//           {token && (
-//             <div className="absolute top-2 right-2">
-//               <div className={`px-2 py-1 rounded text-xs ${
-//                 error ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
-//               }`}>
-//                 {error ? 'Invalid' : 'Valid JWT'}
-//               </div>
-//             </div>
-//           )}
-//         </div>
-
-//         {error && (
-//           <div className="flex items-start space-x-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-//             <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-//             <div>
-//               <div className="font-medium text-red-400">JWT Error</div>
-//               <div className="text-sm text-red-300">{error}</div>
-//             </div>
+//         <textarea value={token} onChange={e => setToken(e.target.value)} placeholder="Paste your JWT token here..." />
+//         {token && (
+//           <div className={`absolute top-2 right-2 ${error ? 'invalid' : 'valid'}`}>
+//             {error ? 'Invalid' : 'Valid JWT'}
 //           </div>
 //         )}
-
-//         {/* Token Info */}
-//         {tokenInfo && (
-//           <div className={`p-4 rounded-lg border ${
-//             isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-300'
-//           }`}>
-//             <h3 className="font-semibold mb-3 flex items-center space-x-2">
-//               <User className="w-4 h-4" />
-//               <span>Token Information</span>
-//             </h3>
-//             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-//               <div>
-//                 <span className="text-gray-500">Algorithm:</span>
-//                 <span className="ml-2 font-mono">{tokenInfo.algorithm}</span>
-//               </div>
-//               <div>
-//                 <span className="text-gray-500">Type:</span>
-//                 <span className="ml-2 font-mono">{tokenInfo.type}</span>
-//               </div>
-//               <div>
-//                 <span className="text-gray-500">Issued At:</span>
-//                 <span className="ml-2">{formatTimestamp(tokenInfo.iat)}</span>
-//               </div>
-//               <div>
-//                 <span className="text-gray-500">Expires At:</span>
-//                 <span className={`ml-2 ${isTokenExpired(tokenInfo.exp) ? 'text-red-400' : 'text-green-400'}`}>
-//                   {formatTimestamp(tokenInfo.exp)}
-//                   {isTokenExpired(tokenInfo.exp) && ' (EXPIRED)'}
-//                 </span>
-//               </div>
-//               <div>
-//                 <span className="text-gray-500">Not Before:</span>
-//                 <span className="ml-2">{formatTimestamp(tokenInfo.nbf)}</span>
-//               </div>
-//               <div>
-//                 <span className="text-gray-500">Subject:</span>
-//                 <span className="ml-2">{tokenInfo.sub || 'Not provided'}</span>
-//               </div>
-//             </div>
-//           </div>
-//         )}
+//         {error && <div className="error-box"><AlertCircle /> <div className="error-text">{error}</div></div>}
 //       </div>
 
-//       {/* Output Sections */}
-//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-//         {/* Header */}
-//         <div className="space-y-4">
-//           <div className="flex justify-between items-center">
-//             <div className="flex items-center space-x-2">
-//               <Shield className="w-5 h-5 text-red-400" />
-//               <span className="text-lg font-semibold text-red-400">Header</span>
-//             </div>
-//             <button
-//               onClick={() => copyToClipboard(decodedHeader, 'Header')}
-//               disabled={!decodedHeader}
-//               className="flex items-center space-x-2 px-3 py-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded text-sm transition-all duration-200 transform hover:scale-105"
-//             >
-//               <Copy className="w-3 h-3" />
-//               <span>Copy</span>
-//             </button>
+//       {tokenInfo && (
+//         <div className="token-info">
+//           <h3><User /> Token Information</h3>
+//           <div className="grid">
+//             <div>Algorithm: <span>{tokenInfo.algorithm}</span></div>
+//             <div>Type: <span>{tokenInfo.type}</span></div>
+//             <div>Issued At: <span>{formatTimestamp(tokenInfo.iat)}</span></div>
+//             <div>Expires At: <span>{formatTimestamp(tokenInfo.exp)}</span></div>
+//             <div>Not Before: <span>{formatTimestamp(tokenInfo.nbf)}</span></div>
+//             <div>Subject: <span>{tokenInfo.sub || 'Not provided'}</span></div>
 //           </div>
+//         </div>
+//       )}
 
-//           <div className={`p-4 rounded-lg border h-72 overflow-auto ${
-//             isDarkMode
-//               ? 'bg-gray-800 border-red-500/30'
-//               : 'bg-red-50 border-red-200'
-//           }`}>
-//             {decodedHeader ? (
-//               <pre className="font-mono text-sm whitespace-pre-wrap">{decodedHeader}</pre>
-//             ) : (
-//               <div className="flex items-center justify-center h-full text-gray-500">
-//                 <div className="text-center">
-//                   <Shield className="w-8 h-8 mx-auto mb-2 text-red-400" />
-//                   <div>JWT header will appear here</div>
-//                 </div>
-//               </div>
-//             )}
+//       <div className="output-section">
+//         <div className="section">
+//           <div className="section-header">
+//             <span><Shield /> Header</span>
+//             <button className="header-btn" onClick={() => copyToClipboard(decodedHeader, 'Header')}>Copy</button>
+//           </div>
+//           <div className="section-content header">
+//             {decodedHeader ? <pre>{decodedHeader}</pre> : <div className="placeholder">JWT header will appear here</div>}
 //           </div>
 //         </div>
 
-//         {/* Payload */}
-//         <div className="space-y-4">
-//           <div className="flex justify-between items-center">
-//             <div className="flex items-center space-x-2">
-//               <User className="w-5 h-5 text-purple-400" />
-//               <span className="text-lg font-semibold text-purple-400">Payload</span>
-//             </div>
-//             <button
-//               onClick={() => copyToClipboard(decodedPayload, 'Payload')}
-//               disabled={!decodedPayload}
-//               className="flex items-center space-x-2 px-3 py-1 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded text-sm transition-all duration-200 transform hover:scale-105"
-//             >
-//               <Copy className="w-3 h-3" />
-//               <span>Copy</span>
-//             </button>
+//         <div className="section">
+//           <div className="section-header">
+//             <span><User /> Payload</span>
+//             <button className="payload-btn" onClick={() => copyToClipboard(decodedPayload, 'Payload')}>Copy</button>
 //           </div>
-
-//           <div className={`p-4 rounded-lg border h-72 overflow-auto ${
-//             isDarkMode
-//               ? 'bg-gray-800 border-purple-500/30'
-//               : 'bg-purple-50 border-purple-200'
-//           }`}>
-//             {decodedPayload ? (
-//               <pre className="font-mono text-sm whitespace-pre-wrap">{decodedPayload}</pre>
-//             ) : (
-//               <div className="flex items-center justify-center h-full text-gray-500">
-//                 <div className="text-center">
-//                   <User className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-//                   <div>JWT payload will appear here</div>
-//                 </div>
-//               </div>
-//             )}
+//           <div className="section-content payload">
+//             {decodedPayload ? <pre>{decodedPayload}</pre> : <div className="placeholder">JWT payload will appear here</div>}
 //           </div>
 //         </div>
 
-//         {/* Signature */}
-//         <div className="space-y-4">
-//           <div className="flex justify-between items-center">
-//             <div className="flex items-center space-x-2">
-//               <Key className="w-5 h-5 text-blue-400" />
-//               <span className="text-lg font-semibold text-blue-400">Signature</span>
-//             </div>
-//             <button
-//               onClick={() => copyToClipboard(signature, 'Signature')}
-//               disabled={!signature}
-//               className="flex items-center space-x-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded text-sm transition-all duration-200 transform hover:scale-105"
-//             >
-//               <Copy className="w-3 h-3" />
-//               <span>Copy</span>
-//             </button>
+//         <div className="section">
+//           <div className="section-header">
+//             <span><Key /> Signature</span>
+//             <button className="signature-btn" onClick={() => copyToClipboard(signature, 'Signature')}>Copy</button>
 //           </div>
-
-//           <div className={`p-4 rounded-lg border h-72 overflow-auto ${
-//             isDarkMode
-//               ? 'bg-gray-800 border-blue-500/30'
-//               : 'bg-blue-50 border-blue-200'
-//           }`}>
-//             {signature ? (
-//               <div className="font-mono text-sm break-all">{signature}</div>
-//             ) : (
-//               <div className="flex items-center justify-center h-full text-gray-500">
-//                 <div className="text-center">
-//                   <Key className="w-8 h-8 mx-auto mb-2 text-blue-400" />
-//                   <div>JWT signature will appear here</div>
-//                 </div>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* JWT Structure Explanation */}
-//       <div className={`p-4 rounded-lg border ${
-//         isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-300'
-//       }`}>
-//         <h3 className="font-semibold mb-2">JWT Structure</h3>
-//         <p className="text-sm text-gray-500 mb-3">
-//           A JWT consists of three parts separated by dots (.), each base64url encoded:
-//         </p>
-//         <div className="font-mono text-sm space-y-1">
-//           <div><span className="text-red-400">Header</span><span className="text-gray-400">.</span><span className="text-purple-400">Payload</span><span className="text-gray-400">.</span><span className="text-blue-400">Signature</span></div>
-//           <div className="text-xs text-gray-500 mt-2">
-//             • Header: Contains the signing algorithm and token type<br/>
-//             • Payload: Contains the claims (user data and metadata)<br/>
-//             • Signature: Used to verify the token hasn't been tampered with
+//           <div className="section-content signature">
+//             {signature ? <pre>{signature}</pre> : <div className="placeholder">JWT signature will appear here</div>}
 //           </div>
 //         </div>
 //       </div>
 //     </div>
+
 //   );
 // };
 
@@ -308,29 +150,109 @@
 
 
 
+import React, { useState, useEffect, useCallback } from 'react';
+import { Copy, AlertCircle, Key, User, Shield, Clock, CheckCircle, Trash2, Upload, Download, Eye, EyeOff } from 'lucide-react';
 
-
-
-import React, { useState, useEffect } from 'react';
-import { Copy, AlertCircle, Key, User, Shield } from 'lucide-react';
-import { decodeJWT, validateJWT } from '../../utils/jwtUtils';
-import './JWTTool.css';
-
-const JWTTool = ({ isDarkMode, showNotification }) => {
-  const [token, setToken] = useState('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification }) => {
+  const [token, setToken] = useState('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6InRlc3QtYXVkaWVuY2UiLCJpc3MiOiJ0ZXN0LWlzc3VlciIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20ifQ.4Adcj3UFYzPUVaVF43FmMab6RlaQD8A9V8wGJinnMsk');
   const [decodedHeader, setDecodedHeader] = useState('');
   const [decodedPayload, setDecodedPayload] = useState('');
   const [signature, setSignature] = useState('');
   const [error, setError] = useState('');
   const [tokenInfo, setTokenInfo] = useState(null);
+  const [notification, setNotification] = useState(null);
+  const [showSignature, setShowSignature] = useState(false);
+  const [stats, setStats] = useState({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
+
+  const showNotification = useCallback((message, type = 'success') => {
+    if (externalShowNotification) {
+      externalShowNotification(message, type);
+    } else {
+      setNotification({ message, type });
+      setTimeout(() => setNotification(null), 3000);
+    }
+  }, [externalShowNotification]);
+
+  const decodeJWT = (token) => {
+    if (!token) throw new Error('Token is required');
+
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      throw new Error('Invalid JWT format. JWT must have three parts separated by dots.');
+    }
+
+    try {
+      const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      const signature = parts[2];
+
+      // Extract common token information
+      const info = {
+        algorithm: header.alg || 'Unknown',
+        type: header.typ || 'Unknown',
+        iat: payload.iat,
+        exp: payload.exp,
+        nbf: payload.nbf,
+        sub: payload.sub,
+        aud: payload.aud,
+        iss: payload.iss,
+        jti: payload.jti
+      };
+
+      return { header, payload, signature, info };
+    } catch (err) {
+      throw new Error('Failed to decode JWT: Invalid base64 encoding');
+    }
+  };
+
+  const validateJWT = (token) => {
+    if (!token.trim()) {
+      throw new Error('Token cannot be empty');
+    }
+
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      throw new Error('Invalid JWT structure');
+    }
+
+    // Basic validation
+    parts.forEach((part, index) => {
+      if (!part) {
+        const partNames = ['header', 'payload', 'signature'];
+        throw new Error(`JWT ${partNames[index]} is empty`);
+      }
+    });
+
+    return true;
+  };
+
+  const calculateStats = (token) => {
+    if (!token) return { headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 };
+
+    const parts = token.split('.');
+    if (parts.length !== 3) return { headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 };
+
+    return {
+      headerSize: parts[0].length,
+      payloadSize: parts[1].length,
+      signatureSize: parts[2].length,
+      totalSize: token.length
+    };
+  };
 
   const handleDecode = () => {
+    if (!token.trim()) {
+      showNotification('Please enter a JWT token', 'error');
+      return;
+    }
+
     try {
       const result = decodeJWT(token);
       setDecodedHeader(JSON.stringify(result.header, null, 2));
       setDecodedPayload(JSON.stringify(result.payload, null, 2));
       setSignature(result.signature);
       setTokenInfo(result.info);
+      setStats(calculateStats(token));
       setError('');
       showNotification('JWT decoded successfully!', 'success');
     } catch (err) {
@@ -339,17 +261,60 @@ const JWTTool = ({ isDarkMode, showNotification }) => {
       setDecodedPayload('');
       setSignature('');
       setTokenInfo(null);
-      showNotification('Invalid JWT token', 'error');
+      setStats({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
+      showNotification(err.message, 'error');
     }
   };
 
   const copyToClipboard = async (content, section) => {
+    if (!content) {
+      showNotification('Nothing to copy', 'error');
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(content);
       showNotification(`${section} copied to clipboard!`, 'success');
     } catch (err) {
       showNotification('Failed to copy', 'error');
     }
+  };
+
+  const downloadJWT = () => {
+    if (!decodedHeader || !decodedPayload) {
+      showNotification('No JWT data to download', 'error');
+      return;
+    }
+
+    const jwtData = {
+      token: token,
+      header: JSON.parse(decodedHeader),
+      payload: JSON.parse(decodedPayload),
+      signature: signature,
+      info: tokenInfo
+    };
+
+    const blob = new Blob([JSON.stringify(jwtData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'jwt-decoded.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showNotification('JWT data downloaded!', 'success');
+  };
+
+  const clearAll = () => {
+    setToken('');
+    setDecodedHeader('');
+    setDecodedPayload('');
+    setSignature('');
+    setError('');
+    setTokenInfo(null);
+    setStats({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
+    showNotification('All fields cleared!', 'info');
   };
 
   const formatTimestamp = (timestamp) => {
@@ -359,104 +324,889 @@ const JWTTool = ({ isDarkMode, showNotification }) => {
   };
 
   const isTokenExpired = (exp) => {
-    if (!exp) return false;
+    if (!exp) return null;
     return Date.now() >= exp * 1000;
   };
 
-  useEffect(() => {
-    if (token) {
-      handleDecode();
-    }
-  }, []);
+  const getTimeUntilExpiry = (exp) => {
+    if (!exp) return 'No expiration';
+    const now = Date.now();
+    const expTime = exp * 1000;
+    const diff = expTime - now;
+
+    if (diff <= 0) return 'Expired';
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  };
 
   useEffect(() => {
-    if (token) {
+    if (token.trim()) {
       try {
         validateJWT(token);
         setError('');
+        handleDecode();
       } catch (err) {
         setError(err.message);
+        setDecodedHeader('');
+        setDecodedPayload('');
+        setSignature('');
+        setTokenInfo(null);
+        setStats({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
       }
+    } else {
+      setError('');
+      setDecodedHeader('');
+      setDecodedPayload('');
+      setSignature('');
+      setTokenInfo(null);
+      setStats({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
     }
   }, [token]);
 
+  const isValid = !error && token.trim();
+  const expired = tokenInfo?.exp ? isTokenExpired(tokenInfo.exp) : false;
+
   return (
-    <div className={`jwt-tool ${isDarkMode ? 'dark' : ''}`}>
-      <div className="title-section">
-        <h2>JWT Decoder</h2>
-        <p>Decode and analyze JSON Web Tokens</p>
-      </div>
+    <div className={`jwt-tool-container ${isDarkMode ? 'dark' : 'light'}`}>
+      <style>{`
+        .jwt-tool-container {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          min-height: 100vh;
+          padding: 2rem;
+          transition: all 0.3s ease;
+        }
+        
+        .jwt-tool-container.dark {
+          background-color: #0f172a;
+          color: #e2e8f0;
+        }
+        
+        .jwt-tool-container.light {
+          background-color: #f8fafc;
+          color: #1e293b;
+        }
 
-      <div className="input-section">
-        <div className="input-header">
-          <span>
-            <Key /> JWT Token
-            {!error && token && <span className="valid">✓ Valid JWT</span>}
-          </span>
-          <button onClick={handleDecode}>Decode</button>
-        </div>
-        <textarea value={token} onChange={e => setToken(e.target.value)} placeholder="Paste your JWT token here..." />
-        {token && (
-          <div className={`absolute top-2 right-2 ${error ? 'invalid' : 'valid'}`}>
-            {error ? 'Invalid' : 'Valid JWT'}
-          </div>
-        )}
-        {error && <div className="error-box"><AlertCircle /> <div className="error-text">{error}</div></div>}
-      </div>
+        /* Notification */
+        .notification {
+          position: fixed;
+          top: 1rem;
+          right: 1rem;
+          z-index: 1000;
+          padding: 1rem 1.5rem;
+          border-radius: 0.5rem;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+          color: white;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.success { background-color: #16a34a; }
+        .notification.error { background-color: #dc2626; }
+        .notification.info { background-color: #2563eb; }
 
-      {tokenInfo && (
-        <div className="token-info">
-          <h3><User /> Token Information</h3>
-          <div className="grid">
-            <div>Algorithm: <span>{tokenInfo.algorithm}</span></div>
-            <div>Type: <span>{tokenInfo.type}</span></div>
-            <div>Issued At: <span>{formatTimestamp(tokenInfo.iat)}</span></div>
-            <div>Expires At: <span>{formatTimestamp(tokenInfo.exp)}</span></div>
-            <div>Not Before: <span>{formatTimestamp(tokenInfo.nbf)}</span></div>
-            <div>Subject: <span>{tokenInfo.sub || 'Not provided'}</span></div>
-          </div>
+        /* Header */
+        .header {
+          // display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+        
+        .title {
+          font-size: 2.5rem;
+          font-weight: bold;
+          background: linear-gradient(90deg, #f59e0b, #ef4444);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin: 0;
+        }
+        
+        .subtitle {
+          color: #6b7280;
+          margin: 0.5rem 0 0 0;
+          font-size: 1.1rem;
+        }
+
+        /* Stats */
+        .stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 1rem;
+          margin-bottom: 2rem;
+          padding: 1.5rem;
+          border-radius: 0.75rem;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .jwt-tool-container.dark .stats {
+          background-color: #1e293b;
+          border: 1px solid #334155;
+        }
+        
+        .jwt-tool-container.light .stats {
+          background-color: white;
+          border: 1px solid #e2e8f0;
+        }
+        
+        .stat-item {
+          text-align: center;
+        }
+        
+        .stat-value {
+          font-size: 2rem;
+          font-weight: bold;
+          margin-bottom: 0.25rem;
+        }
+        
+        .stat-value.blue { color: #3b82f6; }
+        .stat-value.green { color: #16a34a; }
+        .stat-value.orange { color: #f59e0b; }
+        .stat-value.red { color: #dc2626; }
+        .stat-value.purple { color: #8b5cf6; }
+        
+        .stat-label {
+          font-size: 0.875rem;
+          color: #6b7280;
+        }
+
+        /* Controls */
+        .controls {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          margin-bottom: 2rem;
+        }
+        
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1rem;
+          border-radius: 0.5rem;
+          font-weight: 500;
+          cursor: pointer;
+          border: none;
+          transition: all 0.2s ease;
+          font-size: 0.875rem;
+        }
+        
+        .btn:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none !important;
+        }
+        
+        .btn-primary {
+          background-color: #f59e0b;
+          color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+          background-color: #d97706;
+        }
+        
+        .btn-secondary {
+          background-color: #4b5563;
+          color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+          background-color: #374151;
+        }
+        
+        .btn-danger {
+          background-color: #dc2626;
+          color: white;
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+          background-color: #b91c1c;
+        }
+        
+        .btn-toggle {
+          border: 2px solid #6b7280;
+          background-color: transparent;
+        }
+        
+        .jwt-tool-container.dark .btn-toggle {
+          color: #e2e8f0;
+        }
+        
+        .jwt-tool-container.light .btn-toggle {
+          color: #1e293b;
+        }
+        
+        .btn-toggle:hover:not(:disabled) {
+          border-color: #f59e0b;
+        }
+        
+        .btn-toggle.active {
+          background-color: #f59e0b;
+          border-color: #f59e0b;
+          color: white;
+        }
+
+        /* Input Section */
+        .input-section {
+          margin-bottom: 2rem;
+        }
+
+        .input-panel {
+          border-radius: 0.75rem;
+          overflow: hidden;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .jwt-tool-container.dark .input-panel {
+          background-color: #1e293b;
+          border: 1px solid #334155;
+        }
+        
+        .jwt-tool-container.light .input-panel {
+          background-color: white;
+          border: 1px solid #e2e8f0;
+        }
+
+        .input-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 1.5rem;
+          border-bottom: 1px solid;
+          font-weight: 600;
+        }
+        
+        .jwt-tool-container.dark .input-header {
+          border-color: #334155;
+          background-color: #0f172a;
+        }
+        
+        .jwt-tool-container.light .input-header {
+          border-color: #e2e8f0;
+          background-color: #f8fafc;
+        }
+
+        .input-title {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          padding: 0.25rem 0.5rem;
+          border-radius: 0.25rem;
+          font-size: 0.75rem;
+          font-weight: 500;
+          color: white;
+        }
+        
+        .status-badge.valid {
+          background-color: #16a34a;
+        }
+        
+        .status-badge.invalid {
+          background-color: #dc2626;
+        }
+        
+        .status-badge.expired {
+          background-color: #f59e0b;
+        }
+
+        .textarea {
+          width: 100%;
+          min-height: 150px;
+          padding: 1rem;
+          font-family: 'Monaco', 'Consolas', 'Liberation Mono', monospace;
+          font-size: 0.875rem;
+          line-height: 1.5;
+          border: none;
+          outline: none;
+          resize: vertical;
+          word-break: break-all;
+        }
+        
+        .jwt-tool-container.dark .textarea {
+          background-color: #0f172a;
+          color: #e2e8f0;
+        }
+        
+        .jwt-tool-container.light .textarea {
+          background-color: #f8fafc;
+          color: #1e293b;
+        }
+
+        .error-message {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.5rem;
+          padding: 1rem 1.5rem;
+          background-color: rgba(248, 113, 113, 0.1);
+          border-top: 1px solid rgba(248, 113, 113, 0.2);
+          color: #ef4444;
+          font-size: 0.875rem;
+        }
+
+        /* Token Info */
+        .token-info {
+          margin-bottom: 2rem;
+          padding: 1.5rem;
+          border-radius: 0.75rem;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .jwt-tool-container.dark .token-info {
+          background-color: #1e293b;
+          border: 1px solid #334155;
+        }
+        
+        .jwt-tool-container.light .token-info {
+          background-color: white;
+          border: 1px solid #e2e8f0;
+        }
+
+        .info-title {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          color: #f59e0b;
+        }
+
+        .info-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 1rem;
+        }
+
+        .info-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          font-size: 0.875rem;
+        }
+        
+        .jwt-tool-container.dark .info-item {
+          background-color: #0f172a;
+          border: 1px solid #334155;
+        }
+        
+        .jwt-tool-container.light .info-item {
+          background-color: #f8fafc;
+          border: 1px solid #e2e8f0;
+        }
+
+        .info-label {
+          color: #6b7280;
+          font-weight: 500;
+        }
+
+        .info-value {
+          font-weight: 600;
+          color: #3b82f6;
+        }
+
+        .info-value.expired {
+          color: #dc2626;
+        }
+
+        .info-value.valid {
+          color: #16a34a;
+        }
+
+        .info-value.warning {
+          color: #f59e0b;
+        }
+
+        /* Output Sections */
+        .output-grid {
+          display: grid;
+          gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+          .output-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+
+        .output-panel {
+          border-radius: 0.75rem;
+          overflow: hidden;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .jwt-tool-container.dark .output-panel {
+          background-color: #1e293b;
+          border: 1px solid #334155;
+        }
+        
+        .jwt-tool-container.light .output-panel {
+          background-color: white;
+          border: 1px solid #e2e8f0;
+        }
+
+        .output-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 1.5rem;
+          border-bottom: 1px solid;
+          font-weight: 600;
+        }
+        
+        .jwt-tool-container.dark .output-header {
+          border-color: #334155;
+          background-color: #0f172a;
+        }
+        
+        .jwt-tool-container.light .output-header {
+          border-color: #e2e8f0;
+          background-color: #f8fafc;
+        }
+
+        .output-title {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .output-title.header {
+          color: #8b5cf6;
+        }
+
+        .output-title.payload {
+          color: #3b82f6;
+        }
+
+        .output-title.signature {
+          color: #f59e0b;
+        }
+
+        .output-content {
+          padding: 1rem;
+          min-height: 200px;
+          font-family: 'Monaco', 'Consolas', 'Liberation Mono', monospace;
+          font-size: 0.875rem;
+          line-height: 1.5;
+          overflow: auto;
+        }
+        
+        .jwt-tool-container.dark .output-content {
+          background-color: #0f172a;
+          color: #e2e8f0;
+        }
+        
+        .jwt-tool-container.light .output-content {
+          background-color: #f8fafc;
+          color: #1e293b;
+        }
+
+        .empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          color: #6b7280;
+          text-align: center;
+        }
+
+        .empty-icon {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .signature-panel {
+          grid-column: span 2;
+        }
+
+        @media (max-width: 1023px) {
+          .signature-panel {
+            grid-column: span 1;
+          }
+        }
+
+        .signature-content {
+          word-break: break-all;
+          padding: 1rem;
+          background-color: rgba(245, 158, 11, 0.1);
+          border-radius: 0.5rem;
+          margin: 1rem;
+          font-family: monospace;
+          font-size: 0.875rem;
+          line-height: 1.5;
+        }
+
+        .jwt-tool-container.dark .signature-content {
+          background-color: rgba(245, 158, 11, 0.1);
+          color: #fbbf24;
+        }
+
+        .jwt-tool-container.light .signature-content {
+          background-color: rgba(245, 158, 11, 0.1);
+          color: #d97706;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+          .jwt-tool-container {
+            padding: 1rem;
+          }
+          
+          .controls {
+            justify-content: center;
+          }
+          
+          .stats {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          
+          .info-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .output-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+          }
+        }
+      `}</style>
+
+      {/* Notification */}
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          {notification.type === 'success' && <CheckCircle style={{ width: '1.25rem', height: '1.25rem' }} />}
+          {notification.type === 'error' && <AlertCircle style={{ width: '1.25rem', height: '1.25rem' }} />}
+          <span>{notification.message}</span>
         </div>
       )}
 
-      <div className="output-section">
-        <div className="section">
-          <div className="section-header">
-            <span><Shield /> Header</span>
-            <button className="header-btn" onClick={() => copyToClipboard(decodedHeader, 'Header')}>Copy</button>
-          </div>
-          <div className="section-content header">
-            {decodedHeader ? <pre>{decodedHeader}</pre> : <div className="placeholder">JWT header will appear here</div>}
+      <div className="container">
+        {/* Header */}
+        <div className="header">
+          <div>
+            <h1 className="title">JWT Tool</h1>
+            <p className="subtitle">Decode and analyze JSON Web Tokens with comprehensive details</p>
           </div>
         </div>
 
-        <div className="section">
-          <div className="section-header">
-            <span><User /> Payload</span>
-            <button className="payload-btn" onClick={() => copyToClipboard(decodedPayload, 'Payload')}>Copy</button>
+        {/* Stats */}
+        <div className="stats">
+          <div className="stat-item">
+            <div className="stat-value blue">{stats.totalSize}</div>
+            <div className="stat-label">Total Size</div>
           </div>
-          <div className="section-content payload">
-            {decodedPayload ? <pre>{decodedPayload}</pre> : <div className="placeholder">JWT payload will appear here</div>}
+          <div className="stat-item">
+            <div className="stat-value purple">{stats.headerSize}</div>
+            <div className="stat-label">Header</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value green">{stats.payloadSize}</div>
+            <div className="stat-label">Payload</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value orange">{stats.signatureSize}</div>
+            <div className="stat-label">Signature</div>
+          </div>
+          <div className="stat-item">
+            <div className={`stat-value ${isValid ? (expired ? 'orange' : 'green') : 'red'}`}>
+              {!token.trim() ? 'Empty' : isValid ? (expired ? 'Expired' : 'Valid') : 'Invalid'}
+            </div>
+            <div className="stat-label">Status</div>
           </div>
         </div>
 
-        <div className="section">
-          <div className="section-header">
-            <span><Key /> Signature</span>
-            <button className="signature-btn" onClick={() => copyToClipboard(signature, 'Signature')}>Copy</button>
+        {/* Controls */}
+        <div className="controls">
+          <button onClick={clearAll} className="btn btn-danger">
+            <Trash2 style={{ width: '1rem', height: '1rem' }} />
+            Clear
+          </button>
+
+          <button
+            onClick={downloadJWT}
+            disabled={!decodedHeader || !decodedPayload}
+            className="btn btn-secondary"
+          >
+            <Download style={{ width: '1rem', height: '1rem' }} />
+            Download
+          </button>
+
+          <button
+            onClick={() => setShowSignature(!showSignature)}
+            className={`btn btn-toggle ${showSignature ? 'active' : ''}`}
+          >
+            {showSignature ? <EyeOff style={{ width: '1rem', height: '1rem' }} /> : <Eye style={{ width: '1rem', height: '1rem' }} />}
+            {showSignature ? 'Hide' : 'Show'} Signature
+          </button>
+        </div>
+
+        {/* Input Section */}
+        <div className="input-section">
+          <div className="input-panel">
+            <div className="input-header">
+              <div className="input-title">
+                <Key style={{ width: '1.25rem', height: '1.25rem' }} />
+                <h3>JWT Token</h3>
+                {token && (
+                  <span className={`status-badge ${isValid ? (expired ? 'expired' : 'valid') : 'invalid'}`}>
+                    {isValid ? (expired ? <Clock style={{ width: '0.75rem', height: '0.75rem' }} /> : <CheckCircle style={{ width: '0.75rem', height: '0.75rem' }} />) : <AlertCircle style={{ width: '0.75rem', height: '0.75rem' }} />}
+                    {isValid ? (expired ? 'Expired' : 'Valid') : 'Invalid'}
+                  </span>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  onClick={() => copyToClipboard(token, 'Token')}
+                  disabled={!token}
+                  className="btn btn-secondary"
+                  style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                >
+                  <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+                </button>
+              </div>
+            </div>
+
+            <textarea
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              placeholder="Paste your JWT token here..."
+              className="textarea"
+            />
+
+            {error && (
+              <div className="error-message">
+                <AlertCircle style={{ width: '1rem', height: '1rem', marginTop: '0.125rem', flexShrink: 0 }} />
+                <span>{error}</span>
+              </div>
+            )}
           </div>
-          <div className="section-content signature">
-            {signature ? <pre>{signature}</pre> : <div className="placeholder">JWT signature will appear here</div>}
+        </div>
+
+        {/* Token Information */}
+        {tokenInfo && (
+          <div className="token-info">
+            <h3 className="info-title">
+              <User style={{ width: '1.25rem', height: '1.25rem' }} />
+              Token Information
+            </h3>
+            <div className="info-grid">
+              <div className="info-item">
+                <span className="info-label">Algorithm:</span>
+                <span className="info-value">{tokenInfo.algorithm}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Type:</span>
+                <span className="info-value">{tokenInfo.type}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Issued At:</span>
+                <span className="info-value">{formatTimestamp(tokenInfo.iat)}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Expires At:</span>
+                <span className={`info-value ${expired ? 'expired' : 'valid'}`}>
+                  {formatTimestamp(tokenInfo.exp)}
+                </span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Time Until Expiry:</span>
+                <span className={`info-value ${expired ? 'expired' : getTimeUntilExpiry(tokenInfo.exp).includes('d') ? 'valid' : 'warning'}`}>
+                  {getTimeUntilExpiry(tokenInfo.exp)}
+                </span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Not Before:</span>
+                <span className="info-value">{formatTimestamp(tokenInfo.nbf)}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Subject:</span>
+                <span className="info-value">{tokenInfo.sub || 'Not provided'}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Audience:</span>
+                <span className="info-value">{tokenInfo.aud || 'Not provided'}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Issuer:</span>
+                <span className="info-value">{tokenInfo.iss || 'Not provided'}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">JWT ID:</span>
+                <span className="info-value">{tokenInfo.jti || 'Not provided'}</span>
+              </div>
+            </div>
           </div>
+        )}
+
+        {/* Output Sections */}
+        <div className="output-grid">
+          {/* Header Section */}
+          <div className="output-panel">
+            <div className="output-header">
+              <div className="output-title header">
+                <Shield style={{ width: '1.25rem', height: '1.25rem' }} />
+                <h3>Header</h3>
+              </div>
+              <button
+                onClick={() => copyToClipboard(decodedHeader, 'Header')}
+                disabled={!decodedHeader}
+                className="btn btn-secondary"
+                style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+              >
+                <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+              </button>
+            </div>
+            <div className="output-content">
+              {decodedHeader ? (
+                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{decodedHeader}</pre>
+              ) : (
+                <div className="empty-state">
+                  <div className="empty-icon">🛡️</div>
+                  <div>JWT header will appear here</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Payload Section */}
+          <div className="output-panel">
+            <div className="output-header">
+              <div className="output-title payload">
+                <User style={{ width: '1.25rem', height: '1.25rem' }} />
+                <h3>Payload</h3>
+              </div>
+              <button
+                onClick={() => copyToClipboard(decodedPayload, 'Payload')}
+                disabled={!decodedPayload}
+                className="btn btn-secondary"
+                style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+              >
+                <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+              </button>
+            </div>
+            <div className="output-content">
+              {decodedPayload ? (
+                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{decodedPayload}</pre>
+              ) : (
+                <div className="empty-state">
+                  <div className="empty-icon">👤</div>
+                  <div>JWT payload will appear here</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Signature Section */}
+          {showSignature && (
+            <div className="output-panel signature-panel">
+              <div className="output-header">
+                <div className="output-title signature">
+                  <Key style={{ width: '1.25rem', height: '1.25rem' }} />
+                  <h3>Signature</h3>
+                </div>
+                <button
+                  onClick={() => copyToClipboard(signature, 'Signature')}
+                  disabled={!signature}
+                  className="btn btn-secondary"
+                  style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                >
+                  <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+                </button>
+              </div>
+              <div className="output-content">
+                {signature ? (
+                  <div className="signature-content">{signature}</div>
+                ) : (
+                  <div className="empty-state">
+                    <div className="empty-icon">🔑</div>
+                    <div>JWT signature will appear here</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Info Section */}
+        <div style={{ marginTop: '2rem', padding: '2rem', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} className={isDarkMode ? 'dark-panel' : 'light-panel'}>
+          <style>{`
+            .dark-panel {
+              background-color: #1e293b;
+              border: 1px solid #334155;
+            }
+            .light-panel {
+              background-color: white;
+              border: 1px solid #e2e8f0;
+            }
+          `}</style>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#f59e0b' }}>
+            About JSON Web Tokens (JWT)
+          </h3>
+          <div style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
+              JWTs are compact, URL-safe tokens used for securely transmitting information between parties
+            </div>
+            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
+              Consists of three parts: Header, Payload, and Signature, separated by dots (.)
+            </div>
+            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
+              Header contains metadata about the token type and signing algorithm
+            </div>
+            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
+              Payload contains claims (statements about an entity and additional data)
+            </div>
+            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
+              Signature ensures the token hasn't been altered and verifies authenticity
+            </div>
+            <div style={{ color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
+              Commonly used for authentication, authorization, and secure information exchange
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ textAlign: 'center', marginTop: '3rem', paddingTop: '2rem', color: '#6b7280', fontSize: '0.875rem', borderTop: '1px solid #374151' }}>
+          <p>Decode, analyze, and validate JSON Web Tokens with comprehensive token information</p>
         </div>
       </div>
     </div>
-
   );
 };
 
 export default JWTTool;
-
-
-
-
-
