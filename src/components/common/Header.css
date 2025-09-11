@@ -1,5 +1,5 @@
 /* Header Base */
-.header {
+.header-com {
     border-bottom: 1px solid;
     padding: 16px 24px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -12,10 +12,10 @@
 }
 
 .header-dark {
-    background-color: #1f2937;
+    background-color: #15181f;
     /* gray-800 */
-    border-color: #374151;
-    /* gray-700 */
+    border-color: #4e5259
+        /* gray-700 */
 }
 
 /* Container */
@@ -59,6 +59,7 @@
     font-weight: 700;
     background: linear-gradient(to right, #60a5fa, #a78bfa);
     /* blue-400 → purple-500 */
+    /* background: #ffffff; */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -87,10 +88,10 @@
 
 /* Active Tab */
 .tab-active {
-    background-color: #2563eb;
+    background-color: #272930;
     /* blue-600 */
     color: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); */
     transform: scale(1.05);
 }
 

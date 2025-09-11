@@ -153,8 +153,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Copy, AlertCircle, Key, User, Shield, Clock, CheckCircle, Trash2, Upload, Download, Eye, EyeOff } from 'lucide-react';
 
+
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6InRlc3QtYXVkaWVuY2UiLCJpc3MiOiJ0ZXN0LWlzc3VlciIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20ifQ.4Adcj3UFYzPUVaVF43FmMab6RlaQD8A9V8wGJinnMsk
+
 const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification }) => {
-  const [token, setToken] = useState('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6InRlc3QtYXVkaWVuY2UiLCJpc3MiOiJ0ZXN0LWlzc3VlciIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20ifQ.4Adcj3UFYzPUVaVF43FmMab6RlaQD8A9V8wGJinnMsk');
+  const [token, setToken] = useState('');
   const [decodedHeader, setDecodedHeader] = useState('');
   const [decodedPayload, setDecodedPayload] = useState('');
   const [signature, setSignature] = useState('');

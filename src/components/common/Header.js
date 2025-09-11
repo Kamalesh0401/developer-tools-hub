@@ -6,7 +6,7 @@ const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
   const tabs = ['JSON', 'JWT', 'Base64'];
 
   return (
-    <header className={`header ${isDarkMode ? 'header-dark' : 'header-light'}`}>
+    <header className={`header-com ${isDarkMode ? 'header-dark' : 'header-light'}`}>
       <div className="header-container">
         {/* Left Section */}
         <div className="header-left">

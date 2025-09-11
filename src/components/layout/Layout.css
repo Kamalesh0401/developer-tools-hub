@@ -15,9 +15,9 @@
 
 /* Dark mode */
 .layout.dark {
-    background-color: #111827;
+    background-color: #15181f;
     /* gray-900 */
-    color: #ffffff;
+    color: #D9DEEF;
 }
 
 /* Notifications container */
@@ -40,7 +40,8 @@
 
 /* Content wrapper for max width */
 .content-wrapper {
-    max-width: 1280px;
+    /* max-width: 1280px;1542px */
+    max-width: 1542px;
     /* max-w-7xl */
     margin: 0 auto;
 }

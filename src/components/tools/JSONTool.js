@@ -1,197 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import { Copy, AlertCircle, ChevronDown, ChevronRight, Eye, EyeOff } from 'lucide-react';
-// import { formatJSON, minifyJSON, validateJSON } from '../../utils/jsonUtils';
-// import './JSONTool.css';
-
-// const JSONTool = ({ isDarkMode, showNotification }) => {
-//   const [input, setInput] = useState('{\n  "name": "John Doe",\n  "age": 30\n}');
-//   const [output, setOutput] = useState('');
-//   const [error, setError] = useState('');
-//   const [treeView, setTreeView] = useState({});
-//   const [isTreeMode, setIsTreeMode] = useState(false);
-//   const [lineNumbers, setLineNumbers] = useState(true);
-
-//   const handleFormat = () => {
-//     try {
-//       const formatted = formatJSON(input);
-//       setOutput(formatted);
-//       setError('');
-//       showNotification('JSON formatted successfully!', 'success');
-//     } catch (err) {
-//       setError(err.message);
-//       showNotification('Invalid JSON format', 'error');
-//     }
-//   };
-
-//   const handleMinify = () => {
-//     try {
-//       const minified = minifyJSON(input);
-//       setOutput(minified);
-//       setError('');
-//       showNotification('JSON minified successfully!', 'success');
-//     } catch (err) {
-//       setError(err.message);
-//       showNotification('Invalid JSON format', 'error');
-//     }
-//   };
-
-//   const copyToClipboard = async () => {
-//     try {
-//       await navigator.clipboard.writeText(output);
-//       showNotification('Copied to clipboard!', 'success');
-//     } catch (err) {
-//       showNotification('Failed to copy', 'error');
-//     }
-//   };
-
-//   const toggleTreeNode = (path) => {
-//     setTreeView(prev => ({ ...prev, [path]: !prev[path] }));
-//   };
-
-//   const renderTreeView = (obj, path = '', depth = 0) => {
-//     if (typeof obj !== 'object' || obj === null) {
-//       const valueClass = typeof obj === 'string' ? 'text-string' :
-//         typeof obj === 'number' ? 'text-number' :
-//           typeof obj === 'boolean' ? 'text-boolean' : 'text-null';
-//       return <span className={valueClass}>{typeof obj === 'string' ? `"${obj}"` : String(obj)}</span>;
-//     }
-
-//     const isExpanded = treeView[path] !== false;
-//     const entries = Object.entries(obj);
-//     const isArray = Array.isArray(obj);
-
-//     return (
-//       <div className={`tree-node`}>
-//         {depth > 0 && (
-//           <div className="tree-toggle" onClick={() => toggleTreeNode(path)}>
-//             {isExpanded ? <ChevronDown /> : <ChevronRight />}
-//             <span className="text-brace">{isArray ? '[' : '{'}</span>
-//             <span className="text-sm text-gray-500">{entries.length} {entries.length === 1 ? 'item' : 'items'}</span>
-//           </div>
-//         )}
-//         {isExpanded && (
-//           <div className="ml-4 border-l border-gray-600 pl-2">
-//             {entries.map(([key, value], idx) => (
-//               <div key={key}>
-//                 <span className="text-key">"{key}"</span>: {renderTreeView(value, `${path}.${key}`, depth + 1)}
-//                 {idx < entries.length - 1 && <span className="text-comma">,</span>}
-//               </div>
-//             ))}
-//           </div>
-//         )}
-
-//         {/* {isExpanded && (
-//   <div
-//     className="tree-node ml-4 border-l border-gray-600 pl-2"
-//     style={{
-//       maxHeight: isExpanded ? '1000px' : '0',
-//       overflow: 'hidden',
-//       transition: 'max-height 0.3s ease',
-//     }}
-//   >
-//     {entries.map(([key, value], index) => (
-//       <div key={key} className="py-1">
-//         <span className="text-orange-400">"{key}"</span>
-//         <span className="text-gray-400">: </span>
-//         {typeof value === 'object' && value !== null ? (
-//           renderTreeView(value, `${path}.${key}`, depth + 1)
-//         ) : (
-//           renderTreeView(value)
-//         )}
-//         {index < entries.length - 1 && <span className="text-gray-400">,</span>}
-//       </div>
-//     ))}
-//   </div>
-// )} */}
-
-
-//         {depth > 0 && isExpanded && <span className="text-brace">{isArray ? ']' : '}'}</span>}
-//       </div>
-//     );
-//   };
-
-//   const addLineNumbers = (text) => {
-//     if (!lineNumbers) return text;
-//     return text.split('\n').map((line, idx) => `${(idx + 1).toString().padStart(3, ' ')} | ${line}`).join('\n');
-//   };
-
-//   useEffect(() => {
-//     if (input) {
-//       try { validateJSON(input); setError(''); }
-//       catch (err) { setError(err.message); }
-//     }
-//   }, [input]);
-
-//   return (
-//     <div className={`json-tool ${isDarkMode ? 'dark' : 'light'}`}>
-//       <div className="flex justify-between items-center">
-//         <div>
-//           <h2>JSON Viewer / Formatter</h2>
-//           <p>Format, validate, and visualize your JSON data</p>
-//         </div>
-//         <div className="flex space-x-2">
-//           <button onClick={() => setLineNumbers(!lineNumbers)} className={`btn-toggle-line ${lineNumbers ? 'active' : ''}`}>
-//             {lineNumbers ? <Eye /> : <EyeOff />} Line Numbers
-//           </button>
-//           <button onClick={() => setIsTreeMode(!isTreeMode)} className={`btn-toggle-tree ${isTreeMode ? 'active' : ''}`}>
-//             Tree View
-//           </button>
-//         </div>
-//       </div>
-
-//       <div className="grid">
-//         <div>
-//           <div className="flex justify-between items-center">
-//             <span>Input {!error && input && '✓ Valid JSON'}</span>
-//             <div>
-//               <button className="btn-format" onClick={handleFormat}>Format / Beautify</button>
-//               <button className="btn-minify" onClick={handleMinify}>Minify</button>
-//             </div>
-//           </div>
-//           <div style={{ position: 'relative' }}>
-//             <textarea value={input} onChange={e => setInput(e.target.value)} placeholder="Paste your JSON here..." />
-//             {input && <div className={`validation-badge ${error ? 'invalid' : 'valid'}`}>{error ? 'Invalid' : 'Valid'}</div>}
-//           </div>
-//           {error && (
-//             <div className="error-box">
-//               <AlertCircle /> <div>{error}</div>
-//             </div>
-//           )}
-//         </div>
-
-//         <div>
-//           <div className="flex justify-between items-center">
-//             <span>Output</span>
-//             <button className="btn-copy" disabled={!output} onClick={copyToClipboard}><Copy /> Copy</button>
-//           </div>
-//           <div className="output-box">
-//             {output ? (isTreeMode && !error ? renderTreeView(JSON.parse(output)) : <pre>{addLineNumbers(output)}</pre>)
-//               : <div style={{ textAlign: 'center', color: '#6b7280' }}>Formatted JSON will appear here</div>}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default JSONTool;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Copy, AlertCircle, ChevronDown, ChevronRight, Eye, EyeOff, Download, Upload, Trash2, CheckCircle, Settings, RefreshCw } from 'lucide-react';
 
@@ -256,6 +62,12 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
       }
     }
     return count;
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInput(value);      // Update the input state
+    handleFormat(value);  // Call handleFormat with the new value
   };
 
   const handleFormat = () => {
@@ -402,13 +214,14 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         .json-tool-container {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           min-height: 100vh;
-          padding: 2rem;
+          padding: 1rem;
           transition: all 0.3s ease;
+          border-radius: 1.25rem;
         }
         
         .json-tool-container.dark {
-          background-color: #0f172a;
-          color: #e2e8f0;
+          background-color: #232730;
+          color: #D9DEEF;
         }
         
         .json-tool-container.light {
@@ -455,7 +268,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         .title {
           font-size: 2.5rem;
           font-weight: bold;
-          background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+          background: #ffff;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           margin: 0;
@@ -486,8 +299,8 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         }
         
         .json-tool-container.dark .stats {
-          background-color: #1e293b;
-          border: 1px solid #334155;
+          background-color: ##232730;
+          border: 1px solid #4e5259;
         }
         
         .json-tool-container.light .stats {
@@ -512,7 +325,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         
         .stat-label {
           font-size: 0.875rem;
-          color: #6b7280;
+          color: #4e5259;
         }
 
         /* Controls */
@@ -662,7 +475,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         }
         
         .json-tool-container.dark .panel {
-          background-color: #1e293b;
+          background-color: #232730;
           border: 1px solid #334155;
         }
         
@@ -682,7 +495,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         
         .json-tool-container.dark .panel-header {
           border-color: #334155;
-          background-color: #0f172a;
+          background-color: #232730;
         }
         
         .json-tool-container.light .panel-header {
@@ -743,7 +556,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         
         .json-tool-container.dark .textarea, 
         .json-tool-container.dark .output-area {
-          background-color: #0f172a;
+          background-color: #15181f;
           color: #e2e8f0;
         }
         
@@ -913,7 +726,8 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         </div>
       )}
 
-      <div className="container">
+      {/* container */}
+      <div className="">
         {/* Header */}
         <div className="header">
           <div>
@@ -1032,6 +846,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                //onChange={handleInputChange}
                 placeholder="Paste your JSON here..."
                 className="textarea"
                 style={{ tabSize: indentSize }}
