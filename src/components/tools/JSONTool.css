@@ -1,0 +1,250 @@
+/* Container */
+.json-tool {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Headers */
+.json-tool h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.json-tool h3 {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+}
+
+.json-tool h4 {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.json-tool p {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Buttons */
+.json-tool button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.json-tool button:hover {
+    transform: scale(1.05);
+}
+
+.json-tool button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Specific button colors */
+.btn-format {
+    background-color: #2563eb;
+    color: white;
+}
+
+.btn-format:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-minify {
+    background-color: #4b5563;
+    color: white;
+}
+
+.btn-minify:hover {
+    background-color: #374151;
+}
+
+.btn-copy {
+    background-color: #4b5563;
+    color: white;
+}
+
+.btn-copy:hover {
+    background-color: #374151;
+}
+
+.btn-toggle-line,
+.btn-toggle-tree {
+    border: 1px solid #d1d5db;
+    background-color: white;
+    color: #111827;
+}
+
+.btn-toggle-line.active {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+.btn-toggle-tree.active {
+    background-color: #16a34a;
+    color: white;
+    border-color: #16a34a;
+}
+
+/* Grid layout */
+.json-tool .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .json-tool .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Textarea */
+.json-tool textarea,
+.json-tool .output-box {
+    width: 100%;
+    height: 24rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    font-family: monospace;
+    font-size: 0.875rem;
+    resize: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.json-tool.dark textarea,
+.json-tool.dark .output-box {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: white;
+}
+
+.json-tool.light textarea,
+.json-tool.light .output-box {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+    color: #111827;
+}
+
+.json-tool textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Validation badge */
+.json-tool .validation-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: white;
+}
+
+.json-tool .valid {
+    background-color: #16a34a;
+}
+
+.json-tool .invalid {
+    background-color: #dc2626;
+}
+
+/* Error Box */
+.json-tool .error-box {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #fca5a5;
+    background-color: rgba(248, 113, 113, 0.1);
+}
+
+.json-tool .error-box svg {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+/* Output box */
+.output-box {
+    overflow: auto;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    font-family: monospace;
+    font-size: 0.875rem;
+}
+
+.json-tool.dark .output-box {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: #d1d5db;
+}
+
+.json-tool.light .output-box {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    color: #111827;
+}
+
+/* Tree View indentation */
+.tree-node {
+    margin-left: 1rem;
+}
+
+.tree-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    padding: 0.125rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease;
+}
+
+.tree-toggle:hover {
+    background-color: rgba(107, 114, 128, 0.2);
+}
+
+.text-string {
+    color: #16a34a;
+}
+
+.text-number {
+    color: #2563eb;
+}
+
+.text-boolean {
+    color: #8b5cf6;
+}
+
+.text-null {
+    color: #9ca3af;
+}
+
+.text-key {
+    color: #f97316;
+}
+
+.text-brace {
+    color: #3b82f6;
+}
+
+.text-comma {
+    color: #6b7280;
+}

@@ -1,0 +1,209 @@
+/* Base64Tool.css */
+
+/* Main container */
+.base64-tool {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    font-family: Arial, sans-serif;
+}
+
+/* Title section */
+.base64-tool .title-section h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    background: linear-gradient(to right, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.base64-tool .title-section p {
+    margin-top: 0.25rem;
+    color: #6b7280;
+}
+
+/* Top buttons */
+.base64-tool .top-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.base64-tool button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.base64-tool button:hover {
+    transform: scale(1.05);
+}
+
+.base64-tool button:disabled {
+    background-color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* Grid for input/output */
+.base64-tool .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.base64-tool .section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Section header */
+.base64-tool .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.base64-tool .section-header span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.base64-tool .section-header .tag {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+    color: white;
+}
+
+/* Input type tags */
+.base64-tool .tag.text {
+    background-color: #6b7280;
+}
+
+.base64-tool .tag.base64 {
+    background-color: #3b82f6;
+}
+
+.base64-tool .tag.image {
+    background-color: #22c55e;
+}
+
+/* Upload button */
+.base64-tool .upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #4b5563;
+    color: white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.base64-tool .upload-btn:hover {
+    background-color: #374151;
+}
+
+/* Textarea */
+.base64-tool textarea {
+    width: 100%;
+    height: 18rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-family: monospace;
+    font-size: 0.875rem;
+    resize: none;
+    border: 1px solid #d1d5db;
+    transition: all 0.2s ease;
+}
+
+.base64-tool.dark textarea {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: white;
+}
+
+.base64-tool textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Info boxes */
+.base64-tool .info-box {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+}
+
+.base64-tool.dark .info-box {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: white;
+}
+
+/* Output area */
+.base64-tool .output-area {
+    width: 100%;
+    height: 18rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    overflow: auto;
+    font-family: monospace;
+    font-size: 0.875rem;
+    background-color: #f9fafb;
+}
+
+.base64-tool.dark .output-area {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: white;
+}
+
+/* Output analysis and input analysis */
+.base64-tool .analysis {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+}
+
+.base64-tool.dark .analysis {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: white;
+}
+
+.base64-tool .analysis .text-gray {
+    color: #6b7280;
+}
+
+.base64-tool .analysis .text-green {
+    color: #22c55e;
+}
+
+.base64-tool .analysis .text-red {
+    color: #ef4444;
+}
+
+/* Bottom Base64 info */
+.base64-tool .base64-info {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+    font-size: 0.875rem;
+}
+
+.base64-tool.dark .base64-info {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: white;
+}

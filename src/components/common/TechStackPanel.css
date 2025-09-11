@@ -1,0 +1,181 @@
+/* Panel container */
+.tech-panel {
+    position: fixed;
+    right: 1.5rem;
+    top: 8rem;
+    width: 20rem;
+    border-radius: 0.5rem;
+    border: 1px solid;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease-in-out;
+}
+
+.tech-panel.light {
+    background-color: #ffffff;
+    border-color: #e5e7eb;
+    /* gray-200 */
+}
+
+.tech-panel.dark {
+    background-color: #1f2937;
+    /* gray-800 */
+    border-color: #374151;
+    /* gray-700 */
+}
+
+.tech-panel.expanded {
+    transform: translateX(0);
+}
+
+.tech-panel.collapsed {
+    transform: translateX(18rem);
+    /* slide out */
+}
+
+/* Toggle button */
+.tech-toggle {
+    position: absolute;
+    left: -2.5rem;
+    top: 1rem;
+    padding: 0.5rem;
+    border: 1px solid;
+    border-left: none;
+    border-radius: 0.5rem 0 0 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.tech-toggle.light {
+    background-color: #ffffff;
+    border-color: #e5e7eb;
+}
+
+.tech-toggle.light:hover {
+    background-color: #f9fafb;
+}
+
+.tech-toggle.dark {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+.tech-toggle.dark:hover {
+    background-color: #374151;
+}
+
+/* Content */
+.tech-content {
+    padding: 1.5rem;
+}
+
+.tech-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #60a5fa, #a78bfa);
+    /* blue to purple */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Section styling */
+.section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-title {
+    font-weight: 500;
+}
+
+/* Lists */
+.section-list {
+    margin-left: 1.5rem;
+    font-size: 0.875rem;
+    color: #d1d5db;
+    /* gray-300 */
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* Optional tag */
+.optional {
+    font-size: 0.75rem;
+    color: #facc15;
+    /* yellow-400 */
+    background-color: rgba(250, 204, 21, 0.2);
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+/* Features box */
+.features-box {
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.features-box.light {
+    background-color: #f3f4f6;
+    /* gray-100 */
+}
+
+.features-box.dark {
+    background-color: #374151;
+    /* gray-700 */
+}
+
+.features-title {
+    font-weight: 500;
+    color: #818cf8;
+    /* indigo-400 */
+    margin-bottom: 0.5rem;
+}
+
+.features-list {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    /* gray-400 */
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* Icons */
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+.icon.small {
+    width: 16px;
+    height: 16px;
+}
+
+.icon.rotate {
+    transform: rotate(90deg);
+}
+
+.text-blue {
+    color: #60a5fa;
+    /* blue-400 */
+}
+
+.text-green {
+    color: #4ade80;
+    /* green-400 */
+}
+
+.text-purple {
+    color: #a78bfa;
+    /* purple-400 */
+}
