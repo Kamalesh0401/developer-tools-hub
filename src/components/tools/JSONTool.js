@@ -395,7 +395,6 @@
 //     );
 //   };
 
-
 //   const addLineNumbers = (text) => {
 //     if (!lineNumbers || !text) return text;
 //     return text.split('\n').map((line, idx) =>
@@ -498,13 +497,13 @@
 //                     to { transform: translateX(0); opacity: 1; }
 //                 }
 
-//                 .notification.success { 
+//                 .notification.success {
 //                     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 //                 }
-//                 .notification.error { 
+//                 .notification.error {
 //                     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 //                 }
-//                 .notification.info { 
+//                 .notification.info {
 //                     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
 //                 }
 
@@ -771,14 +770,14 @@
 //                     text-align: center;
 //                 }
 
-//                 .json-tool-container.dark .select, 
+//                 .json-tool-container.dark .select,
 //                 .json-tool-container.dark .input {
 //                     background: rgba(21, 24, 31, 0.8);
 //                     color: #e2e8f0;
 //                     border-color: #2f3340;
 //                 }
 
-//                 .json-tool-container.light .select, 
+//                 .json-tool-container.light .select,
 //                 .json-tool-container.light .input {
 //                     background: rgba(255, 255, 255, 0.8);
 //                     color: #1e293b;
@@ -919,12 +918,12 @@
 //                     background: transparent;
 //                 }
 
-//                 .json-tool-container.dark .textarea, 
+//                 .json-tool-container.dark .textarea,
 //                 .json-tool-container.dark .output-area {
 //                     color: #e2e8f0;
 //                 }
 
-//                 .json-tool-container.light .textarea, 
+//                 .json-tool-container.light .textarea,
 //                 .json-tool-container.light .output-area {
 //                     color: #1e293b;
 //                 }
@@ -1490,21 +1489,40 @@
 
 // export default JSONTool;
 
-
-
 /* global BigInt */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
-  Copy, AlertCircle, ChevronDown, ChevronRight,
-  Download, Upload, Trash2, CheckCircle, Settings, RefreshCw,
-  FileText, Code, Search, Zap, Maximize2, Minimize2, RotateCcw,
-  Braces, Brackets, FileJson, FileSpreadsheet, FileCode
-} from 'lucide-react';
+  Copy,
+  AlertCircle,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  Upload,
+  Trash2,
+  CheckCircle,
+  Settings,
+  RefreshCw,
+  FileText,
+  Code,
+  Search,
+  Zap,
+  Maximize2,
+  Minimize2,
+  RotateCcw,
+  Braces,
+  Brackets,
+  FileJson,
+  FileSpreadsheet,
+  FileCode,
+} from "lucide-react";
 
-const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotification }) => {
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
-  const [error, setError] = useState('');
+const JSONTool = ({
+  isDarkMode = true,
+  showNotification: externalShowNotification,
+}) => {
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [error, setError] = useState("");
   const [treeView, setTreeView] = useState({});
   const [isTreeMode, setIsTreeMode] = useState(false);
   const [lineNumbers, setLineNumbers] = useState(true);
@@ -1514,26 +1532,32 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
   const [indentSize, setIndentSize] = useState(2);
   const [autoUpdate, setAutoUpdate] = useState(false);
   const [bigNumbers, setBigNumbers] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [sortKeys, setSortKeys] = useState(false);
   const [escapeUnicode, setEscapeUnicode] = useState(false);
 
-  const showNotification = useCallback((message, type = 'success') => {
-    if (externalShowNotification) {
-      externalShowNotification(message, type);
-    } else {
-      setNotification({ message, type });
-      setTimeout(() => setNotification(null), 3000);
-    }
-  }, [externalShowNotification]);
+  const textareaRef = useRef(null);
+  const highlightRef = useRef(null);
+
+  const showNotification = useCallback(
+    (message, type = "success") => {
+      if (externalShowNotification) {
+        externalShowNotification(message, type);
+      } else {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+      }
+    },
+    [externalShowNotification]
+  );
 
   const parseJSON = (jsonString) => {
     return JSON.parse(jsonString, (key, value) => {
       if (bigNumbers) {
-        if (typeof value === 'string' && value.endsWith('n')) {
+        if (typeof value === "string" && value.endsWith("n")) {
           return BigInt(value.slice(0, -1));
-        } else if (typeof value === 'number' && !Number.isSafeInteger(value)) {
+        } else if (typeof value === "number" && !Number.isSafeInteger(value)) {
           return BigInt(value);
         }
       }
@@ -1542,7 +1566,8 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
   };
 
   const stringifyJSON = (parsed, indent = indentSize) => {
-    let replacer = (key, value) => typeof value === 'bigint' ? `${value}n` : value;
+    let replacer = (key, value) =>
+      typeof value === "bigint" ? `${value}n` : value;
     let formatted = JSON.stringify(parsed, replacer, indent);
 
     if (sortKeys) {
@@ -1562,11 +1587,13 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
   const sortObjectKeys = (obj) => {
     if (Array.isArray(obj)) {
       return obj.map(sortObjectKeys);
-    } else if (obj !== null && typeof obj === 'object') {
+    } else if (obj !== null && typeof obj === "object") {
       const sorted = {};
-      Object.keys(obj).sort().forEach(key => {
-        sorted[key] = sortObjectKeys(obj[key]);
-      });
+      Object.keys(obj)
+        .sort()
+        .forEach((key) => {
+          sorted[key] = sortObjectKeys(obj[key]);
+        });
       return sorted;
     }
     return obj;
@@ -1574,7 +1601,9 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
 
   const minifyJSON = (jsonString) => {
     const parsed = parseJSON(jsonString);
-    return JSON.stringify(parsed, (key, value) => typeof value === 'bigint' ? `${value}n` : value);
+    return JSON.stringify(parsed, (key, value) =>
+      typeof value === "bigint" ? `${value}n` : value
+    );
   };
 
   const validateJSON = (jsonString) => {
@@ -1591,7 +1620,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
     try {
       const parsed = parseJSON(jsonString);
       const size = new Blob([jsonString]).size;
-      const lines = jsonString.split('\n').length;
+      const lines = jsonString.split("\n").length;
       const keys = countKeys(parsed);
       return { size, lines, keys };
     } catch {
@@ -1601,12 +1630,12 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
 
   const countKeys = (obj) => {
     let count = 0;
-    if (typeof obj === 'object' && obj !== null) {
+    if (typeof obj === "object" && obj !== null) {
       if (Array.isArray(obj)) {
-        obj.forEach(item => count += countKeys(item));
+        obj.forEach((item) => (count += countKeys(item)));
       } else {
         count += Object.keys(obj).length;
-        Object.values(obj).forEach(value => count += countKeys(value));
+        Object.values(obj).forEach((value) => (count += countKeys(value)));
       }
     }
     return count;
@@ -1621,12 +1650,12 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           const parsed = parseJSON(value);
           const formatted = stringifyJSON(parsed);
           setOutput(formatted);
-          setError('');
+          setError("");
         } catch (err) {
-          setOutput('');
+          setOutput("");
         }
       } else {
-        setOutput('');
+        setOutput("");
       }
     }
   };
@@ -1634,98 +1663,98 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
   const handleTreeViewFormat = () => {
     setIsTreeMode(true);
     if (!validateJSON(input)) {
-      setError('Invalid JSON');
-      showNotification('Invalid JSON format', 'error');
+      setError("Invalid JSON");
+      showNotification("Invalid JSON format", "error");
       return;
     }
     try {
       const parsed = parseJSON(input);
       const formatted = stringifyJSON(parsed);
       setOutput(formatted);
-      setError('');
-      showNotification('JSON formatted successfully!', 'success');
+      setError("");
+      showNotification("JSON formatted successfully!", "success");
     } catch (err) {
       setError(`Invalid JSON: ${err.message}`);
-      showNotification('Invalid JSON format', 'error');
+      showNotification("Invalid JSON format", "error");
     }
   };
 
   const handleFormat = () => {
     setIsTreeMode(false);
     if (!validateJSON(input)) {
-      setError('Invalid JSON');
-      showNotification('Invalid JSON format', 'error');
+      setError("Invalid JSON");
+      showNotification("Invalid JSON format", "error");
       return;
     }
     try {
       const parsed = parseJSON(input);
       const formatted = stringifyJSON(parsed);
       setOutput(formatted);
-      setError('');
-      showNotification('JSON formatted successfully!', 'success');
+      setError("");
+      showNotification("JSON formatted successfully!", "success");
     } catch (err) {
       setError(`Invalid JSON: ${err.message}`);
-      showNotification('Invalid JSON format', 'error');
+      showNotification("Invalid JSON format", "error");
     }
   };
 
   const handleMinify = () => {
     if (!validateJSON(input)) {
-      setError('Invalid JSON');
-      showNotification('Invalid JSON format', 'error');
+      setError("Invalid JSON");
+      showNotification("Invalid JSON format", "error");
       return;
     }
     try {
       const minified = minifyJSON(input);
       setOutput(minified);
-      setError('');
-      showNotification('JSON minified successfully!', 'success');
+      setError("");
+      showNotification("JSON minified successfully!", "success");
     } catch (err) {
       setError(`Invalid JSON: ${err.message}`);
-      showNotification('Invalid JSON format', 'error');
+      showNotification("Invalid JSON format", "error");
     }
   };
 
   const handleValidate = () => {
     if (validateJSON(input)) {
-      setError('');
-      showNotification('JSON is valid!', 'success');
+      setError("");
+      showNotification("JSON is valid!", "success");
     } else {
-      setError('Invalid JSON');
-      showNotification('Invalid JSON format', 'error');
+      setError("Invalid JSON");
+      showNotification("Invalid JSON format", "error");
     }
   };
 
   const handleClear = () => {
-    setInput('');
-    setOutput('');
-    setError('');
-    setSearchTerm('');
+    setInput("");
+    setOutput("");
+    setError("");
+    setSearchTerm("");
     setTreeView({});
-    showNotification('Cleared successfully!', 'info');
+    showNotification("Cleared successfully!", "info");
   };
 
   const copyToClipboard = async (text = output) => {
     try {
       await navigator.clipboard.writeText(text);
-      showNotification('Copied to clipboard!', 'success');
+      showNotification("Copied to clipboard!", "success");
     } catch (err) {
-      showNotification('Failed to copy', 'error');
+      showNotification("Failed to copy", "error");
     }
   };
 
   const downloadJSON = () => {
     if (!output) return;
-    const blob = new Blob([output], { type: 'application/json' });
+    const blob = new Blob([output], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'formatted.json';
+    a.download = "formatted.json";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showNotification('File downloaded!', 'success');
+    showNotification("File downloaded!", "success");
   };
 
   const handleFileUpload = (event) => {
@@ -1735,59 +1764,70 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
     const reader = new FileReader();
     reader.onload = (e) => {
       setInput(e.target.result);
-      showNotification('File uploaded successfully!', 'success');
+      showNotification("File uploaded successfully!", "success");
     };
     reader.readAsText(file);
   };
 
   const convertToXML = () => {
     if (!validateJSON(input)) {
-      setError('Invalid JSON');
-      showNotification('Invalid JSON format', 'error');
+      setError("Invalid JSON");
+      showNotification("Invalid JSON format", "error");
       return;
     }
     try {
       const parsed = parseJSON(input);
       const xml = jsonToXML(parsed);
       setOutput(xml);
-      showNotification('Converted to XML!', 'success');
+      showNotification("Converted to XML!", "success");
     } catch (err) {
       setError(`Conversion failed: ${err.message}`);
-      showNotification('Conversion failed', 'error');
+      showNotification("Conversion failed", "error");
     }
   };
 
-  const jsonToXML = (obj, rootName = 'root') => {
+  const jsonToXML = (obj, rootName = "root") => {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<${rootName}>`;
-    const escapeXML = (str) => str.replace(/[<>&'"]/g, (char) => {
-      switch (char) {
-        case '<': return '&lt;';
-        case '>': return '&gt;';
-        case '&': return '&amp;';
-        case "'": return '&apos;';
-        case '"': return '&quot;';
-        default: return char;
-      }
-    });
+    const escapeXML = (str) =>
+      str.replace(/[<>&'"]/g, (char) => {
+        switch (char) {
+          case "<":
+            return "&lt;";
+          case ">":
+            return "&gt;";
+          case "&":
+            return "&amp;";
+          case "'":
+            return "&apos;";
+          case '"':
+            return "&quot;";
+          default:
+            return char;
+        }
+      });
     const convertValue = (value, key) => {
-      const safeKey = key.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const safeKey = key.replace(/[^a-zA-Z0-9_-]/g, "_");
       if (Array.isArray(value)) {
-        return value.map((item, index) => {
-          const itemKey = `${safeKey}Item`;
-          if (typeof item === 'object' && item !== null) {
-            return `<${itemKey}>${convertObject(item)}</${itemKey}>`;
-          } else {
-            return `<${itemKey}>${escapeXML(String(item))}</${itemKey}>`;
-          }
-        }).join('');
-      } else if (typeof value === 'object' && value !== null) {
+        return value
+          .map((item, index) => {
+            const itemKey = `${safeKey}Item`;
+            if (typeof item === "object" && item !== null) {
+              return `<${itemKey}>${convertObject(item)}</${itemKey}>`;
+            } else {
+              return `<${itemKey}>${escapeXML(String(item))}</${itemKey}>`;
+            }
+          })
+          .join("");
+      } else if (typeof value === "object" && value !== null) {
         return `<${safeKey}>${convertObject(value)}</${safeKey}>`;
       } else {
         return `<${safeKey}>${escapeXML(String(value))}</${safeKey}>`;
       }
     };
     const convertObject = (obj) => {
-      return Object.entries(obj).map(([key, value]) => convertValue(value, key)).join('');
+      return Object.entries(obj)
+        .map(([key, value]) => convertValue(value, key))
+        .join("");
     };
     xml += convertObject(obj);
     xml += `</${rootName}>`;
@@ -1796,30 +1836,30 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
 
   const convertToCSV = () => {
     if (!validateJSON(input)) {
-      setError('Invalid JSON');
-      showNotification('Invalid JSON format', 'error');
+      setError("Invalid JSON");
+      showNotification("Invalid JSON format", "error");
       return;
     }
     try {
       const parsed = parseJSON(input);
       const csv = jsonToCSV(parsed);
       setOutput(csv);
-      showNotification('Converted to CSV!', 'success');
+      showNotification("Converted to CSV!", "success");
     } catch (err) {
       setError(`Conversion failed: ${err.message}`);
-      showNotification('Conversion failed', 'error');
+      showNotification("Conversion failed", "error");
     }
   };
 
   const jsonToCSV = (json) => {
     let data = Array.isArray(json) ? json : [json];
 
-    const flattenObject = (obj, prefix = '') => {
+    const flattenObject = (obj, prefix = "") => {
       let flat = {};
-      Object.keys(obj).forEach(key => {
+      Object.keys(obj).forEach((key) => {
         const value = obj[key];
         const newKey = prefix ? `${prefix}.${key}` : key;
-        if (typeof value === 'object' && value !== null) {
+        if (typeof value === "object" && value !== null) {
           Object.assign(flat, flattenObject(value, newKey));
         } else {
           flat[newKey] = value;
@@ -1831,36 +1871,46 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
     const flattenedData = data.map(flattenObject);
     const headers = [...new Set(flattenedData.flatMap(Object.keys))];
 
-    const csvRows = flattenedData.map(row =>
-      headers.map(header => {
-        const value = row[header];
-        return value == null ? '' : typeof value === 'string' ? `"${value.replace(/"/g, '""')}"` : value;
-      }).join(',')
+    const csvRows = flattenedData.map((row) =>
+      headers
+        .map((header) => {
+          const value = row[header];
+          return value == null
+            ? ""
+            : typeof value === "string"
+            ? `"${value.replace(/"/g, '""')}"`
+            : value;
+        })
+        .join(",")
     );
 
-    return [headers.join(','), ...csvRows].join('\n');
+    return [headers.join(","), ...csvRows].join("\n");
   };
 
   const toggleTreeNode = (path) => {
-    setTreeView(prev => ({ ...prev, [path]: !prev[path] }));
+    setTreeView((prev) => ({ ...prev, [path]: !prev[path] }));
   };
 
-  const renderTreeView = (obj, path = '', depth = 0) => {
-    if (typeof obj !== 'object' || obj === null) {
+  const renderTreeView = (obj, path = "", depth = 0) => {
+    if (typeof obj !== "object" || obj === null) {
       let valueType = typeof obj;
-      let value = typeof obj === 'string' ? `"${obj}"` : String(obj);
-      if (typeof obj === 'bigint') {
+      let value = typeof obj === "string" ? `"${obj}"` : String(obj);
+      if (typeof obj === "bigint") {
         value = `${obj}n`;
-        valueType = 'bigint';
+        valueType = "bigint";
       } else if (obj === null) {
-        value = 'null';
-        valueType = 'null';
-      } else if (valueType === 'boolean') {
-        value = obj ? 'true' : 'false';
+        value = "null";
+        valueType = "null";
+      } else if (valueType === "boolean") {
+        value = obj ? "true" : "false";
       }
-      const highlighted = searchTerm && value.toLowerCase().includes(searchTerm.toLowerCase())
-        ? value.replace(new RegExp(`(${searchTerm})`, 'gi'), '<mark>$1</mark>')
-        : value;
+      const highlighted =
+        searchTerm && value.toLowerCase().includes(searchTerm.toLowerCase())
+          ? value.replace(
+              new RegExp(`(${searchTerm})`, "gi"),
+              "<mark>$1</mark>"
+            )
+          : value;
 
       return (
         <span
@@ -1873,13 +1923,25 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
 
     const isExpanded = treeView[path] ?? true;
     const isArray = Array.isArray(obj);
-    const entries = isArray ? obj.map((value, index) => [index.toString(), value]) : Object.entries(obj);
+    const entries = isArray
+      ? obj.map((value, index) => [index.toString(), value])
+      : Object.entries(obj);
 
-    const nodeType = isArray ? 'array' : 'object';
-    const countLabel = entries.length === 1 ? (isArray ? 'element' : 'property') : (isArray ? 'elements' : 'properties');
+    const nodeType = isArray ? "array" : "object";
+    const countLabel =
+      entries.length === 1
+        ? isArray
+          ? "element"
+          : "property"
+        : isArray
+        ? "elements"
+        : "properties";
 
     return (
-      <div className="tree-node" style={{ marginLeft: `${depth * 1}rem`, position: 'relative' }}>
+      <div
+        className="tree-node"
+        style={{ marginLeft: `${depth * 1}rem`, position: "relative" }}
+      >
         <div
           className="tree-toggle"
           onClick={() => toggleTreeNode(path)}
@@ -1888,13 +1950,17 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           aria-label={`Toggle ${nodeType} with ${entries.length} ${countLabel}`}
           tabIndex={0}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               toggleTreeNode(path);
             }
           }}
         >
-          {isExpanded ? <ChevronDown className="tree-icon" /> : <ChevronRight className="tree-icon" />}
+          {isExpanded ? (
+            <ChevronDown className="tree-icon" />
+          ) : (
+            <ChevronRight className="tree-icon" />
+          )}
           <span className="tree-type">{nodeType}</span>
           <span className="tree-count">({entries.length})</span>
         </div>
@@ -1902,22 +1968,29 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           <div className="tree-children">
             {entries.map(([key, value], idx) => {
               const keyStr = isArray ? key : `"${key}"`;
-              const highlightedKey = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase())
-                ? keyStr.replace(new RegExp(`(${searchTerm})`, 'gi'), '<mark>$1</mark>')
-                : keyStr;
+              const highlightedKey =
+                searchTerm &&
+                key.toLowerCase().includes(searchTerm.toLowerCase())
+                  ? keyStr.replace(
+                      new RegExp(`(${searchTerm})`, "gi"),
+                      "<mark>$1</mark>"
+                    )
+                  : keyStr;
 
               return (
                 <div key={`${path}-${key}`} className="tree-entry">
                   <span
-                    className={`tree-key ${isArray ? 'tree-key-array' : ''}`}
+                    className={`tree-key ${isArray ? "tree-key-array" : ""}`}
                     dangerouslySetInnerHTML={{ __html: highlightedKey }}
                     title={`Key: ${key}`}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => copyToClipboard(key)}
                   />
                   {!isArray && <span className="tree-colon">: </span>}
                   {renderTreeView(value, `${path}.${key}`, depth + 1)}
-                  {idx < entries.length - 1 && <span className="tree-comma">,</span>}
+                  {idx < entries.length - 1 && (
+                    <span className="tree-comma">,</span>
+                  )}
                 </div>
               );
             })}
@@ -1929,26 +2002,42 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
 
   const addLineNumbers = (text) => {
     if (!lineNumbers || !text) return text;
-    return text.split('\n').map((line, idx) =>
-      `<span class="line-number">${(idx + 1).toString().padStart(3, '0')}</span> ${line}`
-    ).join('\n');
+    return text
+      .split("\n")
+      .map(
+        (line, idx) =>
+          `<span class="line-number">${(idx + 1)
+            .toString()
+            .padStart(3, "0")}</span> ${line}`
+      )
+      .join("\n");
   };
 
   const highlightSearch = (text) => {
     if (!searchTerm || !text) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.replace(regex, '<mark>$1</mark>');
+    const regex = new RegExp(`(${searchTerm})`, "gi");
+    return text.replace(regex, "<mark>$1</mark>");
   };
 
   const highlightJSON = (json) => {
-    return json.replace(/(".*?")(:)|(\btrue\b|\bfalse\b)|(null)|(\b-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)|([{}[\],])/g, (match, p1, p2, p3, p4, p5, p6) => {
-      if (p1) return `<span class="json-key">${p1}</span>${p2 || ''}`;
-      if (p3) return `<span class="json-boolean">${match}</span>`;
-      if (p4) return `<span class="json-null">${match}</span>`;
-      if (p5) return `<span class="json-number">${match}</span>`;
-      if (p6) return `<span class="json-punct">${match}</span>`;
-      return match;
-    });
+    return json.replace(
+      /(".*?")(:)|(\btrue\b|\bfalse\b)|(null)|(\b-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)|([{}[\],])/g,
+      (match, p1, p2, p3, p4, p5, p6) => {
+        if (p1) return `<span class="json-key">${p1}</span>${p2 || ""}`;
+        if (p3) return `<span class="json-boolean">${match}</span>`;
+        if (p4) return `<span class="json-null">${match}</span>`;
+        if (p5) return `<span class="json-number">${match}</span>`;
+        if (p6) return `<span class="json-punct">${match}</span>`;
+        return match;
+      }
+    );
+  };
+
+  const handleScroll = () => {
+    if (textareaRef.current && highlightRef.current) {
+      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
+      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
+    }
   };
 
   useEffect(() => {
@@ -1956,21 +2045,25 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
       const valid = validateJSON(input);
       setIsValid(valid);
       if (valid) {
-        setError('');
+        setError("");
         setStats(calculateStats(input));
       } else {
-        setError('Invalid JSON syntax');
+        setError("Invalid JSON syntax");
         setStats({ size: 0, lines: 0, keys: 0 });
       }
     } else {
-      setError('');
+      setError("");
       setIsValid(true);
       setStats({ size: 0, lines: 0, keys: 0 });
     }
   }, [input, bigNumbers]);
 
   return (
-    <div className={`json-tool-container ${isDarkMode ? 'dark' : 'light'} ${isFullscreen ? 'fullscreen' : ''}`}>
+    <div
+      className={`json-tool-container ${isDarkMode ? "dark" : "light"} ${
+        isFullscreen ? "fullscreen" : ""
+      }`}
+    >
       <style>{`
         /* Global Styles */
         .json-tool-container {
@@ -2365,7 +2458,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           backdrop-filter: blur(10px);
           box-shadow: 0 8px 32px rgba(0,0,0,0.15);
           transition: transform 0.2s ease;
-          min-height: 400px;
+          min-height: 600px;
         }
         
         .panel:hover {
@@ -2439,6 +2532,8 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           display: flex;
           flex-direction: column;
           overflow: hidden;
+          // min-height: 600px;
+          // max-height: 600px;
         }
 
         .editor-container {
@@ -2497,6 +2592,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           line-height: 1.5;
           overflow: auto;
           background: transparent;
+          height: 600px;
         }
         
         .json-tool-container.dark .output-area {
@@ -2512,21 +2608,6 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           white-space: pre-wrap;
           word-wrap: break-word;
         }
-
-        .line-number {
-          color: #64748b;
-          user-select: none;
-          display: inline-block;
-          min-width: 3em;
-          text-align: right;
-          padding-right: 1em;
-        }
-
-        .json-key { color: #f97316; }
-        .json-boolean { color: #8b5cf6; }
-        .json-null { color: #64748b; }
-        .json-number { color: #3b82f6; }
-        .json-punct { color: #94a3b8; }
 
         .empty-state {
           display: flex;
@@ -2624,7 +2705,6 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           color: #94a3b8;
           margin-left: 0.25rem;
         }
-
         .tree-value-string {
           color: #10b981;
         }
@@ -2747,6 +2827,14 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
             flex-wrap: wrap;
             justify-content: center;
           }
+          
+          .panel-content {
+            height: 400px;
+          }
+          
+          .output-area {
+            height: 400px;
+          }
         }
 
         /* Scrollbar Styles */
@@ -2780,14 +2868,39 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         .output-area::-webkit-scrollbar-thumb:hover {
           background: linear-gradient(135deg, #475569, #334155);
         }
+
+        /* Enhanced UI Adjustments */
+        .json-tool-container {
+          padding: 2rem;
+        }
+
+        .header, .stats, .middle-controls, .panel {
+          border-radius: 1.5rem;
+          box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+          border-radius: 1rem;
+          padding: 1rem;
+        }
+
+        .middle-controls {
+          min-width: 220px;
+          padding: 1.5rem;
+        }
+
+        .json-key { color: #ff6b00; font-weight: bold; }
+        .json-number { color: #007bff; }
+        .json-boolean { color: #6f42c1; }
+        .json-null { color: #6c757d; }
       `}</style>
 
       {/* Notification */}
       {notification && (
         <div className={`notification ${notification.type}`}>
-          {notification.type === 'success' && <CheckCircle size={20} />}
-          {notification.type === 'error' && <AlertCircle size={20} />}
-          {notification.type === 'info' && <RefreshCw size={20} />}
+          {notification.type === "success" && <CheckCircle size={20} />}
+          {notification.type === "error" && <AlertCircle size={20} />}
+          {notification.type === "info" && <RefreshCw size={20} />}
           <span>{notification.message}</span>
         </div>
       )}
@@ -2795,8 +2908,13 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
       {/* Header */}
       <div className="header">
         <div>
-          <h1 className={`title ${isDarkMode ? 'dark' : 'light'}`}>JSON Toolkit</h1>
-          {/* <p className="subtitle">Advanced JSON editor with formatting, validation, visualization & conversions</p> */}
+          <h1 className={`title ${isDarkMode ? "dark" : "light"}`}>
+            JSON Toolkit
+          </h1>
+          <p className="subtitle">
+            Advanced JSON editor with formatting, validation, visualization &
+            conversions
+          </p>
         </div>
 
         <div className="header-controls">
@@ -2805,16 +2923,16 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
             className="btn btn-toggle"
           >
             {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-            {isFullscreen ? 'Exit' : 'Fullscreen'}
+            {isFullscreen ? "Exit" : "Fullscreen"}
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Settings size={16} />
             <select
               value={indentSize}
               onChange={(e) => setIndentSize(Number(e.target.value))}
               className="select"
-              style={{ width: 'auto' }}
+              style={{ width: "auto" }}
             >
               <option value={2}>2 Spaces</option>
               <option value={4}>4 Spaces</option>
@@ -2825,7 +2943,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
       </div>
 
       {/* Stats */}
-      {/* <div className="stats">
+      <div className="stats">
         <div className="stat-item">
           <div className="stat-value blue">{stats.size}</div>
           <div className="stat-label">Bytes</div>
@@ -2839,12 +2957,12 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           <div className="stat-label">Properties</div>
         </div>
         <div className="stat-item">
-          <div className={`stat-value ${isValid ? 'green' : 'red'}`}>
-            {isValid ? '✓' : '✗'}
+          <div className={`stat-value ${isValid ? "green" : "red"}`}>
+            {isValid ? "✓" : "✗"}
           </div>
           <div className="stat-label">Valid</div>
         </div>
-      </div> */}
+      </div>
 
       {/* Main Layout */}
       <div className="main-layout">
@@ -2854,9 +2972,15 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
             <div className="panel-title">
               <h3 style={{ margin: 0 }}>Input JSON</h3>
               {input && (
-                <span className={`status-badge ${isValid ? 'valid' : 'invalid'}`}>
-                  {isValid ? <CheckCircle size={12} /> : <AlertCircle size={12} />}
-                  {isValid ? 'Valid' : 'Invalid'}
+                <span
+                  className={`status-badge ${isValid ? "valid" : "invalid"}`}
+                >
+                  {isValid ? (
+                    <CheckCircle size={12} />
+                  ) : (
+                    <AlertCircle size={12} />
+                  )}
+                  {isValid ? "Valid" : "Invalid"}
                 </span>
               )}
             </div>
@@ -2865,15 +2989,15 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
                 onClick={() => copyToClipboard(input)}
                 disabled={!input}
                 className="btn btn-secondary"
-                style={{ padding: '0.5rem 0.75rem' }}
+                style={{ padding: "0.5rem 0.75rem" }}
               >
                 <Copy size={14} />
               </button>
               <button
-                onClick={() => setInput('')}
+                onClick={() => setInput("")}
                 disabled={!input}
                 className="btn btn-danger"
-                style={{ padding: '0.5rem 0.75rem' }}
+                style={{ padding: "0.5rem 0.75rem" }}
               >
                 <RotateCcw size={14} />
               </button>
@@ -2882,16 +3006,24 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
 
           <div className="panel-content">
             <div className="editor-container">
-              <pre className="highlight-overlay" dangerouslySetInnerHTML={{ __html: highlightJSON(highlightSearch(input)) }} />
+              <pre
+                ref={highlightRef}
+                className="highlight-overlay"
+                dangerouslySetInnerHTML={{
+                  __html: highlightJSON(highlightSearch(addLineNumbers(input))),
+                }}
+              />
               <textarea
+                ref={textareaRef}
                 className="textarea"
                 value={input}
                 onChange={handleInputChange}
+                onScroll={handleScroll}
                 placeholder="Paste or type your JSON here..."
                 style={{
-                  color: 'transparent',
-                  background: 'transparent',
-                  caretColor: isDarkMode ? '#e2e8f0' : '#1e293b',
+                  color: "transparent",
+                  background: "transparent",
+                  caretColor: isDarkMode ? "#e2e8f0" : "#1e293b",
                 }}
               />
             </div>
@@ -2919,7 +3051,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
             </div>
             <button
               onClick={handleTreeViewFormat}
-              className={`btn btn-toggle ${isTreeMode ? 'active green' : ''}`}
+              className={`btn btn-toggle ${isTreeMode ? "active green" : ""}`}
             >
               <FileText size={16} />
               Tree View
@@ -2929,24 +3061,41 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           <div className="controls-divider"></div>
 
           <div className="controls-group">
-            <div className="checkbox-group" onClick={() => setAutoUpdate(!autoUpdate)}>
-              <div className={`checkbox ${autoUpdate ? 'checked' : ''}`}></div>
+            <div
+              className="checkbox-group"
+              onClick={() => setAutoUpdate(!autoUpdate)}
+            >
+              <div className={`checkbox ${autoUpdate ? "checked" : ""}`}></div>
               <span>Auto Format</span>
             </div>
-            <div className="checkbox-group" onClick={() => setBigNumbers(!bigNumbers)}>
-              <div className={`checkbox ${bigNumbers ? 'checked' : ''}`}></div>
+            <div
+              className="checkbox-group"
+              onClick={() => setBigNumbers(!bigNumbers)}
+            >
+              <div className={`checkbox ${bigNumbers ? "checked" : ""}`}></div>
               <span>BigInt Support</span>
             </div>
-            <div className="checkbox-group" onClick={() => setLineNumbers(!lineNumbers)}>
-              <div className={`checkbox ${lineNumbers ? 'checked' : ''}`}></div>
+            <div
+              className="checkbox-group"
+              onClick={() => setLineNumbers(!lineNumbers)}
+            >
+              <div className={`checkbox ${lineNumbers ? "checked" : ""}`}></div>
               <span>Line Numbers</span>
             </div>
-            <div className="checkbox-group" onClick={() => setSortKeys(!sortKeys)}>
-              <div className={`checkbox ${sortKeys ? 'checked' : ''}`}></div>
+            <div
+              className="checkbox-group"
+              onClick={() => setSortKeys(!sortKeys)}
+            >
+              <div className={`checkbox ${sortKeys ? "checked" : ""}`}></div>
               <span>Sort Keys</span>
             </div>
-            <div className="checkbox-group" onClick={() => setEscapeUnicode(!escapeUnicode)}>
-              <div className={`checkbox ${escapeUnicode ? 'checked' : ''}`}></div>
+            <div
+              className="checkbox-group"
+              onClick={() => setEscapeUnicode(!escapeUnicode)}
+            >
+              <div
+                className={`checkbox ${escapeUnicode ? "checked" : ""}`}
+              ></div>
               <span>Escape Unicode</span>
             </div>
           </div>
@@ -2954,23 +3103,43 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
           <div className="controls-divider"></div>
 
           <div className="controls-group">
-            <button onClick={handleFormat} disabled={!input || !isValid} className="btn btn-primary">
+            <button
+              onClick={handleFormat}
+              disabled={!input || !isValid}
+              className="btn btn-primary"
+            >
               <Braces size={16} />
               Format
             </button>
-            <button onClick={handleMinify} disabled={!input || !isValid} className="btn btn-secondary">
+            <button
+              onClick={handleMinify}
+              disabled={!input || !isValid}
+              className="btn btn-secondary"
+            >
               <Brackets size={16} />
               Minify
             </button>
-            <button onClick={handleValidate} disabled={!input} className="btn btn-warning">
+            <button
+              onClick={handleValidate}
+              disabled={!input}
+              className="btn btn-warning"
+            >
               <CheckCircle size={16} />
               Validate
             </button>
-            <button onClick={convertToXML} disabled={!input || !isValid} className="btn btn-success">
+            <button
+              onClick={convertToXML}
+              disabled={!input || !isValid}
+              className="btn btn-success"
+            >
               <FileCode size={16} />
               To XML
             </button>
-            <button onClick={convertToCSV} disabled={!input || !isValid} className="btn btn-success">
+            <button
+              onClick={convertToCSV}
+              disabled={!input || !isValid}
+              className="btn btn-success"
+            >
               <FileSpreadsheet size={16} />
               To CSV
             </button>
@@ -2984,7 +3153,11 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
                 className="file-input"
               />
             </label>
-            <button onClick={handleClear} disabled={!input && !output} className="btn btn-danger">
+            <button
+              onClick={handleClear}
+              disabled={!input && !output}
+              className="btn btn-danger"
+            >
               <Trash2 size={16} />
               Clear
             </button>
@@ -2999,7 +3172,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
               {output && (
                 <span className="status-badge valid">
                   <Zap size={12} />
-                  {isTreeMode ? 'Tree' : 'Text'}
+                  {isTreeMode ? "Tree" : "Text"}
                 </span>
               )}
             </div>
@@ -3008,7 +3181,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
                 onClick={() => copyToClipboard()}
                 disabled={!output}
                 className="btn btn-secondary"
-                style={{ padding: '0.5rem 0.75rem' }}
+                style={{ padding: "0.5rem 0.75rem" }}
               >
                 <Copy size={14} />
               </button>
@@ -3016,15 +3189,15 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
                 onClick={downloadJSON}
                 disabled={!output}
                 className="btn btn-success"
-                style={{ padding: '0.5rem 0.75rem' }}
+                style={{ padding: "0.5rem 0.75rem" }}
               >
                 <Download size={14} />
               </button>
               <button
-                onClick={() => setOutput('')}
+                onClick={() => setOutput("")}
                 disabled={!output}
                 className="btn btn-danger"
-                style={{ padding: '0.5rem 0.75rem' }}
+                style={{ padding: "0.5rem 0.75rem" }}
               >
                 <Trash2 size={14} />
               </button>
@@ -3035,7 +3208,14 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
             <div className="output-area">
               {output ? (
                 isTreeMode && !error && isValid ? (
-                  <div style={{ fontSize: '0.875rem', overflow: 'auto' }}>
+                  <div
+                    style={{
+                      fontSize: "0.875rem",
+                      overflow: "auto",
+                      height: "100%",
+                      wordWrap: "break-word",
+                    }}
+                  >
                     {(() => {
                       try {
                         return renderTreeView(parseJSON(output));
@@ -3043,7 +3223,9 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
                         return (
                           <pre
                             dangerouslySetInnerHTML={{
-                              __html: highlightSearch(addLineNumbers(highlightJSON(output)))
+                              __html: highlightSearch(
+                                addLineNumbers(highlightJSON(output))
+                              ),
                             }}
                           />
                         );
@@ -3053,17 +3235,26 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
                 ) : (
                   <pre
                     dangerouslySetInnerHTML={{
-                      __html: highlightSearch(addLineNumbers(highlightJSON(output)))
+                      __html: highlightSearch(
+                        addLineNumbers(highlightJSON(output))
+                      ),
                     }}
+                    style={{ height: "100%", overflow: "auto" }}
                   />
                 )
               ) : (
                 <div className="empty-state">
-                  {/* <div className="empty-icon">⚡</div>
+                  <div className="empty-icon">⚡</div>
                   <div>Output will appear here</div>
-                  <div style={{ fontSize: '0.875rem', marginTop: '0.5rem', opacity: 0.7 }}>
+                  <div
+                    style={{
+                      fontSize: "0.875rem",
+                      marginTop: "0.5rem",
+                      opacity: 0.7,
+                    }}
+                  >
                     Format, minify, or convert your JSON
-                  </div> */}
+                  </div>
                 </div>
               )}
             </div>
@@ -3072,11 +3263,12 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
       </div>
 
       {/* Footer */}
-      {/* <div className="footer">
+      <div className="footer">
         <p>
-          <strong>JSON Toolkit Pro</strong> - Professional JSON processing with advanced features for developers
+          <strong>JSON Toolkit Pro</strong> - Professional JSON processing with
+          advanced features for developers
         </p>
-      </div> */}
+      </div>
     </div>
   );
 };
