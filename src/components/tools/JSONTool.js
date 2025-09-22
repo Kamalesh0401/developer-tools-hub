@@ -2950,7 +2950,7 @@ const JSONTool = ({
       <div className="header">
         <div>
           <h1 className={`title ${isDarkMode ? "dark" : "light"}`}>
-            JSON Toolkit
+            JSON Tool
           </h1>
           <p className="subtitle">
             Advanced JSON editor with formatting, validation, visualization &
@@ -3306,7 +3306,7 @@ const JSONTool = ({
       {/* Footer */}
       <div className="footer">
         <p>
-          <strong>JSON Toolkit Pro</strong> - Professional JSON processing with
+          <strong>JSON Tool</strong> - Professional JSON processing with
           advanced features for developers
         </p>
       </div>
