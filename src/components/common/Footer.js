@@ -15,15 +15,15 @@ const Footer = ({ isDarkMode }) => {
           </div>
 
           <div className="footer-links">
-            <a href="#" className="footer-link">
+            <a  href="/about" className="footer-link">
               <Info className="footer-icon" />
               <span>About</span>
             </a>
-            <a href="#" className="footer-link">
+            <a  href="/contact" className="footer-link">
               <Mail className="footer-icon" />
               <span>Contact</span>
             </a>
-            <a href="#" className="footer-link">
+            <a  href="/gitHub" className="footer-link">
               <Github className="footer-icon" />
               <span>GitHub</span>
             </a>
