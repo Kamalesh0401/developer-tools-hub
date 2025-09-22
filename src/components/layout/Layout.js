@@ -2,7 +2,6 @@ import React from 'react';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
 import Notification from '../common/Notification';
-import TechStackPanel from '../common/TechStackPanel';
 import './Layout.css';
 
 const Layout = ({

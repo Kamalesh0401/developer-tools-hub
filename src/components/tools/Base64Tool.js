@@ -3,7 +3,6 @@
 // import { encodeBase64, decodeBase64, detectDataType } from '../../utils/base64Utils';
 // import './Base64Tool.css';
 
-
 // const Base64Tool = ({ isDarkMode, showNotification }) => {
 //   const [input, setInput] = useState('Hello, World!');
 //   const [output, setOutput] = useState('');
@@ -217,35 +216,57 @@
 
 // export default Base64Tool;
 
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Copy,
+  Upload,
+  Download,
+  FileText,
+  Image,
+  Trash2,
+  RefreshCw,
+  ArrowLeftRight,
+  CheckCircle,
+  AlertCircle,
+  Settings,
+} from "lucide-react";
 
-
-import React, { useState, useEffect, useCallback } from 'react';
-import { Copy, Upload, Download, FileText, Image, Trash2, RefreshCw, ArrowLeftRight, CheckCircle, AlertCircle, Settings } from 'lucide-react';
-
-const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotification }) => {
-  const [input, setInput] = useState('Hello, World! This is a sample text for Base64 encoding.');
-  const [output, setOutput] = useState('');
-  const [inputType, setInputType] = useState('text');
-  const [outputType, setOutputType] = useState('text');
-  const [lastOperation, setLastOperation] = useState('');
+const Base64Tool = ({
+  isDarkMode = true,
+  showNotification: externalShowNotification,
+}) => {
+  const [input, setInput] = useState(
+    "Hello, World! This is a sample text for Base64 encoding."
+  );
+  const [output, setOutput] = useState("");
+  const [inputType, setInputType] = useState("text");
+  const [outputType, setOutputType] = useState("text");
+  const [lastOperation, setLastOperation] = useState("");
   const [notification, setNotification] = useState(null);
-  const [stats, setStats] = useState({ inputSize: 0, outputSize: 0, difference: 0 });
+  const [stats, setStats] = useState({
+    inputSize: 0,
+    outputSize: 0,
+    difference: 0,
+  });
   const [isValid, setIsValid] = useState(true);
 
-  const showNotification = useCallback((message, type = 'success') => {
-    if (externalShowNotification) {
-      externalShowNotification(message, type);
-    } else {
-      setNotification({ message, type });
-      setTimeout(() => setNotification(null), 3000);
-    }
-  }, [externalShowNotification]);
+  const showNotification = useCallback(
+    (message, type = "success") => {
+      if (externalShowNotification) {
+        externalShowNotification(message, type);
+      } else {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+      }
+    },
+    [externalShowNotification]
+  );
 
   const encodeBase64 = (text) => {
     try {
       return btoa(unescape(encodeURIComponent(text)));
     } catch (error) {
-      throw new Error('Failed to encode text');
+      throw new Error("Failed to encode text");
     }
   };
 
@@ -253,24 +274,24 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
     try {
       return decodeURIComponent(escape(atob(base64)));
     } catch (error) {
-      throw new Error('Invalid Base64 string');
+      throw new Error("Invalid Base64 string");
     }
   };
 
   const detectDataType = (data) => {
-    if (!data) return 'text';
+    if (!data) return "text";
 
     // Check if it's valid Base64
     if (isValidBase64(data)) {
-      return 'base64';
+      return "base64";
     }
 
     // Check if it looks like an image data URL
-    if (data.startsWith('data:image/')) {
-      return 'image';
+    if (data.startsWith("data:image/")) {
+      return "image";
     }
 
-    return 'text';
+    return "text";
   };
 
   const isValidBase64 = (str) => {
@@ -297,12 +318,12 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
     try {
       const encoded = encodeBase64(input);
       setOutput(encoded);
-      setLastOperation('encode');
-      setOutputType('base64');
+      setLastOperation("encode");
+      setOutputType("base64");
       setStats(calculateStats(input, encoded));
-      showNotification('Text encoded to Base64 successfully!', 'success');
+      showNotification("Text encoded to Base64 successfully!", "success");
     } catch (err) {
-      showNotification('Failed to encode: ' + err.message, 'error');
+      showNotification("Failed to encode: " + err.message, "error");
     }
   };
 
@@ -310,21 +331,21 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
     try {
       const decoded = decodeBase64(input);
       setOutput(decoded);
-      setLastOperation('decode');
-      setOutputType('text');
+      setLastOperation("decode");
+      setOutputType("text");
       setStats(calculateStats(input, decoded));
-      showNotification('Base64 decoded successfully!', 'success');
+      showNotification("Base64 decoded successfully!", "success");
     } catch (err) {
-      showNotification('Failed to decode: Invalid Base64 format', 'error');
+      showNotification("Failed to decode: Invalid Base64 format", "error");
     }
   };
 
   const copyToClipboard = async (text = output) => {
     try {
       await navigator.clipboard.writeText(text);
-      showNotification('Copied to clipboard!', 'success');
+      showNotification("Copied to clipboard!", "success");
     } catch (err) {
-      showNotification('Failed to copy', 'error');
+      showNotification("Failed to copy", "error");
     }
   };
 
@@ -335,20 +356,20 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target.result;
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith("image/")) {
         // For images, we want the base64 data without the data URL prefix
-        const base64Data = result.split(',')[1];
+        const base64Data = result.split(",")[1];
         setInput(base64Data);
-        setInputType('image');
+        setInputType("image");
       } else {
         // For text files
         setInput(result);
-        setInputType('text');
+        setInputType("text");
       }
-      showNotification(`File "${file.name}" loaded successfully!`, 'success');
+      showNotification(`File "${file.name}" loaded successfully!`, "success");
     };
 
-    if (file.type.startsWith('image/')) {
+    if (file.type.startsWith("image/")) {
       reader.readAsDataURL(file);
     } else {
       reader.readAsText(file);
@@ -357,29 +378,31 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
 
   const downloadOutput = () => {
     try {
-      const blob = new Blob([output], { type: 'text/plain' });
+      const blob = new Blob([output], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `${lastOperation === 'encode' ? 'encoded' : 'decoded'}_output.txt`;
+      a.download = `${
+        lastOperation === "encode" ? "encoded" : "decoded"
+      }_output.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showNotification('File downloaded successfully!', 'success');
+      showNotification("File downloaded successfully!", "success");
     } catch (err) {
-      showNotification('Failed to download file', 'error');
+      showNotification("Failed to download file", "error");
     }
   };
 
   const clearAll = () => {
-    setInput('');
-    setOutput('');
-    setInputType('text');
-    setOutputType('text');
-    setLastOperation('');
+    setInput("");
+    setOutput("");
+    setInputType("text");
+    setOutputType("text");
+    setLastOperation("");
     setStats({ inputSize: 0, outputSize: 0, difference: 0 });
-    showNotification('All fields cleared!', 'info');
+    showNotification("All fields cleared!", "info");
   };
 
   const swapInputOutput = () => {
@@ -391,18 +414,18 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
     setOutput(tempInput);
     setInputType(outputType);
     setOutputType(tempType);
-    setLastOperation(lastOperation === 'encode' ? 'decode' : 'encode');
-    showNotification('Input and output swapped!', 'info');
+    setLastOperation(lastOperation === "encode" ? "decode" : "encode");
+    showNotification("Input and output swapped!", "info");
   };
 
   const getInputIcon = () => {
     switch (inputType) {
-      case 'image':
-        return <Image style={{ width: '1rem', height: '1rem' }} />;
-      case 'base64':
-        return <Settings style={{ width: '1rem', height: '1rem' }} />;
+      case "image":
+        return <Image style={{ width: "1rem", height: "1rem" }} />;
+      case "base64":
+        return <Settings style={{ width: "1rem", height: "1rem" }} />;
       default:
-        return <FileText style={{ width: '1rem', height: '1rem' }} />;
+        return <FileText style={{ width: "1rem", height: "1rem" }} />;
     }
   };
 
@@ -410,15 +433,15 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
     if (input) {
       const type = detectDataType(input);
       setInputType(type);
-      setIsValid(type === 'base64' ? isValidBase64(input) : true);
+      setIsValid(type === "base64" ? isValidBase64(input) : true);
     } else {
-      setInputType('text');
+      setInputType("text");
       setIsValid(true);
     }
-  }, [input]);
+  }, [input, detectDataType]);
 
   return (
-    <div className={`base64-tool-container ${isDarkMode ? 'dark' : 'light'}`}>
+    <div className={`base64-tool-container ${isDarkMode ? "dark" : "light"}`}>
       <style>{`
         .base64-tool-container {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -902,8 +925,12 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
       {/* Notification */}
       {notification && (
         <div className={`notification ${notification.type}`}>
-          {notification.type === 'success' && <CheckCircle style={{ width: '1.25rem', height: '1.25rem' }} />}
-          {notification.type === 'error' && <AlertCircle style={{ width: '1.25rem', height: '1.25rem' }} />}
+          {notification.type === "success" && (
+            <CheckCircle style={{ width: "1.25rem", height: "1.25rem" }} />
+          )}
+          {notification.type === "error" && (
+            <AlertCircle style={{ width: "1.25rem", height: "1.25rem" }} />
+          )}
           <span>{notification.message}</span>
         </div>
       )}
@@ -913,7 +940,10 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
         <div className="header">
           <div>
             <h1 className="title">Base64 Tool</h1>
-            <p className="subtitle">Encode text to Base64 or decode Base64 to text with advanced analysis</p>
+            <p className="subtitle">
+              Encode text to Base64 or decode Base64 to text with advanced
+              analysis
+            </p>
           </div>
         </div>
 
@@ -928,14 +958,31 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
             <div className="stat-label">Output Bytes</div>
           </div>
           <div className="stat-item">
-            <div className={`stat-value ${stats.difference > 0 ? 'red' : stats.difference < 0 ? 'green' : 'purple'}`}>
-              {stats.difference > 0 ? '+' : ''}{stats.difference}
+            <div
+              className={`stat-value ${
+                stats.difference > 0
+                  ? "red"
+                  : stats.difference < 0
+                  ? "green"
+                  : "purple"
+              }`}
+            >
+              {stats.difference > 0 ? "+" : ""}
+              {stats.difference}
             </div>
             <div className="stat-label">Difference</div>
           </div>
           <div className="stat-item">
-            <div className={`stat-value ${inputType === 'base64' ? (isValid ? 'green' : 'red') : 'blue'}`}>
-              {inputType === 'base64' ? (isValid ? '✓' : '✗') : inputType.charAt(0).toUpperCase() + inputType.slice(1)}
+            <div
+              className={`stat-value ${
+                inputType === "base64" ? (isValid ? "green" : "red") : "blue"
+              }`}
+            >
+              {inputType === "base64"
+                ? isValid
+                  ? "✓"
+                  : "✗"
+                : inputType.charAt(0).toUpperCase() + inputType.slice(1)}
             </div>
             <div className="stat-label">Input Type</div>
           </div>
@@ -943,8 +990,12 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
 
         {/* Controls */}
         <div className="controls">
-          <button onClick={handleEncode} disabled={!input} className="btn btn-primary">
-            <RefreshCw style={{ width: '1rem', height: '1rem' }} />
+          <button
+            onClick={handleEncode}
+            disabled={!input}
+            className="btn btn-primary"
+          >
+            <RefreshCw style={{ width: "1rem", height: "1rem" }} />
             Encode
           </button>
 
@@ -961,17 +1012,17 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
             disabled={!input || !output}
             className="btn btn-warning"
           >
-            <ArrowLeftRight style={{ width: '1rem', height: '1rem' }} />
+            <ArrowLeftRight style={{ width: "1rem", height: "1rem" }} />
             Swap
           </button>
 
           <button onClick={clearAll} className="btn btn-danger">
-            <Trash2 style={{ width: '1rem', height: '1rem' }} />
+            <Trash2 style={{ width: "1rem", height: "1rem" }} />
             Clear All
           </button>
 
           <label className="btn btn-success">
-            <Upload style={{ width: '1rem', height: '1rem' }} />
+            <Upload style={{ width: "1rem", height: "1rem" }} />
             Upload
             <input
               type="file"
@@ -993,10 +1044,20 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
                 <span className={`type-tag ${inputType}`}>
                   {inputType.toUpperCase()}
                 </span>
-                {inputType === 'base64' && (
-                  <span className={`status-badge ${isValid ? 'valid' : 'invalid'}`}>
-                    {isValid ? <CheckCircle style={{ width: '0.75rem', height: '0.75rem' }} /> : <AlertCircle style={{ width: '0.75rem', height: '0.75rem' }} />}
-                    {isValid ? 'Valid' : 'Invalid'}
+                {inputType === "base64" && (
+                  <span
+                    className={`status-badge ${isValid ? "valid" : "invalid"}`}
+                  >
+                    {isValid ? (
+                      <CheckCircle
+                        style={{ width: "0.75rem", height: "0.75rem" }}
+                      />
+                    ) : (
+                      <AlertCircle
+                        style={{ width: "0.75rem", height: "0.75rem" }}
+                      />
+                    )}
+                    {isValid ? "Valid" : "Invalid"}
                   </span>
                 )}
               </div>
@@ -1005,9 +1066,9 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
                   onClick={() => copyToClipboard(input)}
                   disabled={!input}
                   className="btn btn-secondary"
-                  style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                  style={{ padding: "0.5rem", fontSize: "0.75rem" }}
                 >
-                  <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+                  <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
                 </button>
               </div>
             </div>
@@ -1029,17 +1090,25 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
                   </div>
                   <div className="analysis-item">
                     <span className="analysis-label">Length:</span>
-                    <span className="analysis-value gray">{input.length} characters</span>
+                    <span className="analysis-value gray">
+                      {input.length} characters
+                    </span>
                   </div>
                   <div className="analysis-item">
                     <span className="analysis-label">Size:</span>
-                    <span className="analysis-value gray">{stats.inputSize} bytes</span>
+                    <span className="analysis-value gray">
+                      {stats.inputSize} bytes
+                    </span>
                   </div>
-                  {inputType === 'base64' && (
+                  {inputType === "base64" && (
                     <div className="analysis-item">
                       <span className="analysis-label">Valid Base64:</span>
-                      <span className={`analysis-value ${isValid ? 'green' : 'red'}`}>
-                        {isValid ? 'Yes' : 'No'}
+                      <span
+                        className={`analysis-value ${
+                          isValid ? "green" : "red"
+                        }`}
+                      >
+                        {isValid ? "Yes" : "No"}
                       </span>
                     </div>
                   )}
@@ -1053,7 +1122,7 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
             <div className="panel-header">
               <div className="panel-title">
                 <h3>Output</h3>
-                <FileText style={{ width: '1rem', height: '1rem' }} />
+                <FileText style={{ width: "1rem", height: "1rem" }} />
                 {output && (
                   <span className={`type-tag ${outputType}`}>
                     {outputType.toUpperCase()}
@@ -1065,17 +1134,17 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
                   onClick={() => copyToClipboard()}
                   disabled={!output}
                   className="btn btn-secondary"
-                  style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                  style={{ padding: "0.5rem", fontSize: "0.75rem" }}
                 >
-                  <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+                  <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
                 </button>
                 <button
                   onClick={downloadOutput}
                   disabled={!output}
                   className="btn btn-success"
-                  style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                  style={{ padding: "0.5rem", fontSize: "0.75rem" }}
                 >
-                  <Download style={{ width: '0.875rem', height: '0.875rem' }} />
+                  <Download style={{ width: "0.875rem", height: "0.875rem" }} />
                 </button>
               </div>
             </div>
@@ -1083,12 +1152,22 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
             <div className="panel-content">
               <div className="output-area">
                 {output ? (
-                  <pre style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{output}</pre>
+                  <pre
+                    style={{
+                      margin: 0,
+                      whiteSpace: "pre-wrap",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {output}
+                  </pre>
                 ) : (
                   <div className="empty-state">
                     <div className="empty-icon">🔄</div>
                     <div>Encoded/Decoded result will appear here</div>
-                    <div style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>Use Encode or Decode buttons</div>
+                    <div style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>
+                      Use Encode or Decode buttons
+                    </div>
                   </div>
                 )}
               </div>
@@ -1102,17 +1181,34 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
                   </div>
                   <div className="analysis-item">
                     <span className="analysis-label">Length:</span>
-                    <span className="analysis-value gray">{output.length} characters</span>
+                    <span className="analysis-value gray">
+                      {output.length} characters
+                    </span>
                   </div>
                   <div className="analysis-item">
                     <span className="analysis-label">Size:</span>
-                    <span className="analysis-value gray">{stats.outputSize} bytes</span>
+                    <span className="analysis-value gray">
+                      {stats.outputSize} bytes
+                    </span>
                   </div>
                   <div className="analysis-item">
                     <span className="analysis-label">Size Change:</span>
-                    <span className={`analysis-value ${stats.difference > 0 ? 'red' : stats.difference < 0 ? 'green' : 'gray'}`}>
-                      {stats.difference > 0 ? '+' : ''}{stats.difference} bytes
-                      {stats.difference !== 0 && ` (${((stats.difference / stats.inputSize) * 100).toFixed(1)}%)`}
+                    <span
+                      className={`analysis-value ${
+                        stats.difference > 0
+                          ? "red"
+                          : stats.difference < 0
+                          ? "green"
+                          : "gray"
+                      }`}
+                    >
+                      {stats.difference > 0 ? "+" : ""}
+                      {stats.difference} bytes
+                      {stats.difference !== 0 &&
+                        ` (${(
+                          (stats.difference / stats.inputSize) *
+                          100
+                        ).toFixed(1)}%)`}
                     </span>
                   </div>
                 </div>
@@ -1125,18 +1221,48 @@ const Base64Tool = ({ isDarkMode = true, showNotification: externalShowNotificat
         <div className="info-section">
           <h3 className="info-title">About Base64 Encoding</h3>
           <ul className="info-list">
-            <li className="info-item">Base64 is a binary-to-text encoding scheme that represents binary data in ASCII format</li>
-            <li className="info-item">Uses characters A-Z, a-z, 0-9, plus (+), and slash (/) with optional padding (=)</li>
-            <li className="info-item">Base64 encoding increases data size by approximately 33% due to the 6-bit to 8-bit conversion</li>
-            <li className="info-item">Commonly used in email attachments, data URLs, web APIs, and embedding images in HTML/CSS</li>
-            <li className="info-item">Every 3 bytes of input data produces exactly 4 characters of Base64 output</li>
-            <li className="info-item">Safe for transmission over text-based protocols that may not handle binary data properly</li>
+            <li className="info-item">
+              Base64 is a binary-to-text encoding scheme that represents binary
+              data in ASCII format
+            </li>
+            <li className="info-item">
+              Uses characters A-Z, a-z, 0-9, plus (+), and slash (/) with
+              optional padding (=)
+            </li>
+            <li className="info-item">
+              Base64 encoding increases data size by approximately 33% due to
+              the 6-bit to 8-bit conversion
+            </li>
+            <li className="info-item">
+              Commonly used in email attachments, data URLs, web APIs, and
+              embedding images in HTML/CSS
+            </li>
+            <li className="info-item">
+              Every 3 bytes of input data produces exactly 4 characters of
+              Base64 output
+            </li>
+            <li className="info-item">
+              Safe for transmission over text-based protocols that may not
+              handle binary data properly
+            </li>
           </ul>
         </div>
 
         {/* Footer */}
-        <div style={{ textAlign: 'center', marginTop: '3rem', paddingTop: '2rem', color: '#6b7280', fontSize: '0.875rem', borderTop: '1px solid #374151' }}>
-          <p>Supports text encoding, decoding, file uploads, and comprehensive data analysis</p>
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: "3rem",
+            paddingTop: "2rem",
+            color: "#6b7280",
+            fontSize: "0.875rem",
+            borderTop: "1px solid #374151",
+          }}
+        >
+          <p>
+            Supports text encoding, decoding, file uploads, and comprehensive
+            data analysis
+          </p>
         </div>
       </div>
     </div>

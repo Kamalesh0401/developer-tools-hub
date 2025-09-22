@@ -143,85 +143,106 @@
 
 // export default JWTTool;
 
-
-
-
-
-
-
-
-import React, { useState, useEffect, useCallback } from 'react';
-import { Copy, AlertCircle, Key, User, Shield, Clock, CheckCircle, Trash2, Upload, Download, Eye, EyeOff } from 'lucide-react';
-
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Copy,
+  AlertCircle,
+  Key,
+  User,
+  Shield,
+  Clock,
+  CheckCircle,
+  Trash2,
+  Download,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE5MTYyMzkwMjIsImF1ZCI6InRlc3QtYXVkaWVuY2UiLCJpc3MiOiJ0ZXN0LWlzc3VlciIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20ifQ.4Adcj3UFYzPUVaVF43FmMab6RlaQD8A9V8wGJinnMsk
 
-const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification }) => {
-  const [token, setToken] = useState('');
-  const [decodedHeader, setDecodedHeader] = useState('');
-  const [decodedPayload, setDecodedPayload] = useState('');
-  const [signature, setSignature] = useState('');
-  const [error, setError] = useState('');
+const JWTTool = ({
+  isDarkMode = true,
+  showNotification: externalShowNotification,
+}) => {
+  const [token, setToken] = useState("");
+  const [decodedHeader, setDecodedHeader] = useState("");
+  const [decodedPayload, setDecodedPayload] = useState("");
+  const [signature, setSignature] = useState("");
+  const [error, setError] = useState("");
   const [tokenInfo, setTokenInfo] = useState(null);
   const [notification, setNotification] = useState(null);
   const [showSignature, setShowSignature] = useState(false);
-  const [stats, setStats] = useState({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
+  const [stats, setStats] = useState({
+    headerSize: 0,
+    payloadSize: 0,
+    signatureSize: 0,
+    totalSize: 0,
+  });
 
-  const showNotification = useCallback((message, type = 'success') => {
-    if (externalShowNotification) {
-      externalShowNotification(message, type);
-    } else {
-      setNotification({ message, type });
-      setTimeout(() => setNotification(null), 3000);
-    }
-  }, [externalShowNotification]);
+  const showNotification = useCallback(
+    (message, type = "success") => {
+      if (externalShowNotification) {
+        externalShowNotification(message, type);
+      } else {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3000);
+      }
+    },
+    [externalShowNotification]
+  );
 
   const decodeJWT = (token) => {
-    if (!token) throw new Error('Token is required');
+    if (!token) throw new Error("Token is required");
 
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length !== 3) {
-      throw new Error('Invalid JWT format. JWT must have three parts separated by dots.');
+      throw new Error(
+        "Invalid JWT format. JWT must have three parts separated by dots."
+      );
     }
 
     try {
-      const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
-      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      const header = JSON.parse(
+        atob(parts[0].replace(/-/g, "+").replace(/_/g, "/"))
+      );
+      const payload = JSON.parse(
+        atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"))
+      );
       const signature = parts[2];
 
       // Extract common token information
       const info = {
-        algorithm: header.alg || 'Unknown',
-        type: header.typ || 'Unknown',
+        algorithm: header.alg || "Unknown",
+        type: header.typ || "Unknown",
         iat: payload.iat,
         exp: payload.exp,
         nbf: payload.nbf,
         sub: payload.sub,
         aud: payload.aud,
         iss: payload.iss,
-        jti: payload.jti
+        jti: payload.jti,
       };
 
       return { header, payload, signature, info };
     } catch (err) {
-      throw new Error('Failed to decode JWT: Invalid base64 encoding');
+      throw new Error("Failed to decode JWT: Invalid base64 encoding");
     }
   };
 
   const validateJWT = (token) => {
     if (!token.trim()) {
-      throw new Error('Token cannot be empty');
+      throw new Error("Token cannot be empty");
     }
 
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length !== 3) {
-      throw new Error('Invalid JWT structure');
+      throw new Error("Invalid JWT structure");
     }
 
     // Basic validation
     parts.forEach((part, index) => {
       if (!part) {
-        const partNames = ['header', 'payload', 'signature'];
+        const partNames = ["header", "payload", "signature"];
         throw new Error(`JWT ${partNames[index]} is empty`);
       }
     });
@@ -230,62 +251,38 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
   };
 
   const calculateStats = (token) => {
-    if (!token) return { headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 };
+    if (!token)
+      return { headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 };
 
-    const parts = token.split('.');
-    if (parts.length !== 3) return { headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 };
+    const parts = token.split(".");
+    if (parts.length !== 3)
+      return { headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 };
 
     return {
       headerSize: parts[0].length,
       payloadSize: parts[1].length,
       signatureSize: parts[2].length,
-      totalSize: token.length
+      totalSize: token.length,
     };
-  };
-
-  const handleDecode = () => {
-    if (!token.trim()) {
-      showNotification('Please enter a JWT token', 'error');
-      return;
-    }
-
-    try {
-      const result = decodeJWT(token);
-      setDecodedHeader(JSON.stringify(result.header, null, 2));
-      setDecodedPayload(JSON.stringify(result.payload, null, 2));
-      setSignature(result.signature);
-      setTokenInfo(result.info);
-      setStats(calculateStats(token));
-      setError('');
-      showNotification('JWT decoded successfully!', 'success');
-    } catch (err) {
-      setError(err.message);
-      setDecodedHeader('');
-      setDecodedPayload('');
-      setSignature('');
-      setTokenInfo(null);
-      setStats({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
-      showNotification(err.message, 'error');
-    }
   };
 
   const copyToClipboard = async (content, section) => {
     if (!content) {
-      showNotification('Nothing to copy', 'error');
+      showNotification("Nothing to copy", "error");
       return;
     }
 
     try {
       await navigator.clipboard.writeText(content);
-      showNotification(`${section} copied to clipboard!`, 'success');
+      showNotification(`${section} copied to clipboard!`, "success");
     } catch (err) {
-      showNotification('Failed to copy', 'error');
+      showNotification("Failed to copy", "error");
     }
   };
 
   const downloadJWT = () => {
     if (!decodedHeader || !decodedPayload) {
-      showNotification('No JWT data to download', 'error');
+      showNotification("No JWT data to download", "error");
       return;
     }
 
@@ -294,34 +291,36 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
       header: JSON.parse(decodedHeader),
       payload: JSON.parse(decodedPayload),
       signature: signature,
-      info: tokenInfo
+      info: tokenInfo,
     };
 
-    const blob = new Blob([JSON.stringify(jwtData, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(jwtData, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'jwt-decoded.json';
+    a.download = "jwt-decoded.json";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showNotification('JWT data downloaded!', 'success');
+    showNotification("JWT data downloaded!", "success");
   };
 
   const clearAll = () => {
-    setToken('');
-    setDecodedHeader('');
-    setDecodedPayload('');
-    setSignature('');
-    setError('');
+    setToken("");
+    setDecodedHeader("");
+    setDecodedPayload("");
+    setSignature("");
+    setError("");
     setTokenInfo(null);
     setStats({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
-    showNotification('All fields cleared!', 'info');
+    showNotification("All fields cleared!", "info");
   };
 
   const formatTimestamp = (timestamp) => {
-    if (!timestamp) return 'Not provided';
+    if (!timestamp) return "Not provided";
     const date = new Date(timestamp * 1000);
     return date.toLocaleString();
   };
@@ -332,12 +331,12 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
   };
 
   const getTimeUntilExpiry = (exp) => {
-    if (!exp) return 'No expiration';
+    if (!exp) return "No expiration";
     const now = Date.now();
     const expTime = exp * 1000;
     const diff = expTime - now;
 
-    if (diff <= 0) return 'Expired';
+    if (diff <= 0) return "Expired";
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -349,34 +348,75 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
   };
 
   useEffect(() => {
+    const handleDecode = () => {
+      if (!token.trim()) {
+        showNotification("Please enter a JWT token", "error");
+        return;
+      }
+
+      try {
+        const result = decodeJWT(token);
+        setDecodedHeader(JSON.stringify(result.header, null, 2));
+        setDecodedPayload(JSON.stringify(result.payload, null, 2));
+        setSignature(result.signature);
+        setTokenInfo(result.info);
+        setStats(calculateStats(token));
+        setError("");
+        showNotification("JWT decoded successfully!", "success");
+      } catch (err) {
+        setError(err.message);
+        setDecodedHeader("");
+        setDecodedPayload("");
+        setSignature("");
+        setTokenInfo(null);
+        setStats({
+          headerSize: 0,
+          payloadSize: 0,
+          signatureSize: 0,
+          totalSize: 0,
+        });
+        showNotification(err.message, "error");
+      }
+    };
+
     if (token.trim()) {
       try {
         validateJWT(token);
-        setError('');
+        setError("");
         handleDecode();
       } catch (err) {
         setError(err.message);
-        setDecodedHeader('');
-        setDecodedPayload('');
-        setSignature('');
+        setDecodedHeader("");
+        setDecodedPayload("");
+        setSignature("");
         setTokenInfo(null);
-        setStats({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
+        setStats({
+          headerSize: 0,
+          payloadSize: 0,
+          signatureSize: 0,
+          totalSize: 0,
+        });
       }
     } else {
-      setError('');
-      setDecodedHeader('');
-      setDecodedPayload('');
-      setSignature('');
+      setError("");
+      setDecodedHeader("");
+      setDecodedPayload("");
+      setSignature("");
       setTokenInfo(null);
-      setStats({ headerSize: 0, payloadSize: 0, signatureSize: 0, totalSize: 0 });
+      setStats({
+        headerSize: 0,
+        payloadSize: 0,
+        signatureSize: 0,
+        totalSize: 0,
+      });
     }
-  }, [token]);
+  }, [token, showNotification]);
 
   const isValid = !error && token.trim();
   const expired = tokenInfo?.exp ? isTokenExpired(tokenInfo.exp) : false;
 
   return (
-    <div className={`jwt-tool-container ${isDarkMode ? 'dark' : 'light'}`}>
+    <div className={`jwt-tool-container ${isDarkMode ? "dark" : "light"}`}>
       <style>{`
         .jwt-tool-container {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -907,8 +947,12 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
       {/* Notification */}
       {notification && (
         <div className={`notification ${notification.type}`}>
-          {notification.type === 'success' && <CheckCircle style={{ width: '1.25rem', height: '1.25rem' }} />}
-          {notification.type === 'error' && <AlertCircle style={{ width: '1.25rem', height: '1.25rem' }} />}
+          {notification.type === "success" && (
+            <CheckCircle style={{ width: "1.25rem", height: "1.25rem" }} />
+          )}
+          {notification.type === "error" && (
+            <AlertCircle style={{ width: "1.25rem", height: "1.25rem" }} />
+          )}
           <span>{notification.message}</span>
         </div>
       )}
@@ -918,7 +962,9 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
         <div className="header">
           <div>
             <h1 className="title">JWT Tool</h1>
-            <p className="subtitle">Decode and analyze JSON Web Tokens with comprehensive details</p>
+            <p className="subtitle">
+              Decode and analyze JSON Web Tokens with comprehensive details
+            </p>
           </div>
         </div>
 
@@ -941,8 +987,18 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
             <div className="stat-label">Signature</div>
           </div>
           <div className="stat-item">
-            <div className={`stat-value ${isValid ? (expired ? 'orange' : 'green') : 'red'}`}>
-              {!token.trim() ? 'Empty' : isValid ? (expired ? 'Expired' : 'Valid') : 'Invalid'}
+            <div
+              className={`stat-value ${
+                isValid ? (expired ? "orange" : "green") : "red"
+              }`}
+            >
+              {!token.trim()
+                ? "Empty"
+                : isValid
+                ? expired
+                  ? "Expired"
+                  : "Valid"
+                : "Invalid"}
             </div>
             <div className="stat-label">Status</div>
           </div>
@@ -951,7 +1007,7 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
         {/* Controls */}
         <div className="controls">
           <button onClick={clearAll} className="btn btn-danger">
-            <Trash2 style={{ width: '1rem', height: '1rem' }} />
+            <Trash2 style={{ width: "1rem", height: "1rem" }} />
             Clear
           </button>
 
@@ -960,16 +1016,20 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
             disabled={!decodedHeader || !decodedPayload}
             className="btn btn-secondary"
           >
-            <Download style={{ width: '1rem', height: '1rem' }} />
+            <Download style={{ width: "1rem", height: "1rem" }} />
             Download
           </button>
 
           <button
             onClick={() => setShowSignature(!showSignature)}
-            className={`btn btn-toggle ${showSignature ? 'active' : ''}`}
+            className={`btn btn-toggle ${showSignature ? "active" : ""}`}
           >
-            {showSignature ? <EyeOff style={{ width: '1rem', height: '1rem' }} /> : <Eye style={{ width: '1rem', height: '1rem' }} />}
-            {showSignature ? 'Hide' : 'Show'} Signature
+            {showSignature ? (
+              <EyeOff style={{ width: "1rem", height: "1rem" }} />
+            ) : (
+              <Eye style={{ width: "1rem", height: "1rem" }} />
+            )}
+            {showSignature ? "Hide" : "Show"} Signature
           </button>
         </div>
 
@@ -978,23 +1038,41 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
           <div className="input-panel">
             <div className="input-header">
               <div className="input-title">
-                <Key style={{ width: '1.25rem', height: '1.25rem' }} />
+                <Key style={{ width: "1.25rem", height: "1.25rem" }} />
                 <h3>JWT Token</h3>
                 {token && (
-                  <span className={`status-badge ${isValid ? (expired ? 'expired' : 'valid') : 'invalid'}`}>
-                    {isValid ? (expired ? <Clock style={{ width: '0.75rem', height: '0.75rem' }} /> : <CheckCircle style={{ width: '0.75rem', height: '0.75rem' }} />) : <AlertCircle style={{ width: '0.75rem', height: '0.75rem' }} />}
-                    {isValid ? (expired ? 'Expired' : 'Valid') : 'Invalid'}
+                  <span
+                    className={`status-badge ${
+                      isValid ? (expired ? "expired" : "valid") : "invalid"
+                    }`}
+                  >
+                    {isValid ? (
+                      expired ? (
+                        <Clock
+                          style={{ width: "0.75rem", height: "0.75rem" }}
+                        />
+                      ) : (
+                        <CheckCircle
+                          style={{ width: "0.75rem", height: "0.75rem" }}
+                        />
+                      )
+                    ) : (
+                      <AlertCircle
+                        style={{ width: "0.75rem", height: "0.75rem" }}
+                      />
+                    )}
+                    {isValid ? (expired ? "Expired" : "Valid") : "Invalid"}
                   </span>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
                 <button
-                  onClick={() => copyToClipboard(token, 'Token')}
+                  onClick={() => copyToClipboard(token, "Token")}
                   disabled={!token}
                   className="btn btn-secondary"
-                  style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                  style={{ padding: "0.5rem", fontSize: "0.75rem" }}
                 >
-                  <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+                  <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
                 </button>
               </div>
             </div>
@@ -1008,7 +1086,14 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
 
             {error && (
               <div className="error-message">
-                <AlertCircle style={{ width: '1rem', height: '1rem', marginTop: '0.125rem', flexShrink: 0 }} />
+                <AlertCircle
+                  style={{
+                    width: "1rem",
+                    height: "1rem",
+                    marginTop: "0.125rem",
+                    flexShrink: 0,
+                  }}
+                />
                 <span>{error}</span>
               </div>
             )}
@@ -1019,7 +1104,7 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
         {tokenInfo && (
           <div className="token-info">
             <h3 className="info-title">
-              <User style={{ width: '1.25rem', height: '1.25rem' }} />
+              <User style={{ width: "1.25rem", height: "1.25rem" }} />
               Token Information
             </h3>
             <div className="info-grid">
@@ -1033,39 +1118,59 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
               </div>
               <div className="info-item">
                 <span className="info-label">Issued At:</span>
-                <span className="info-value">{formatTimestamp(tokenInfo.iat)}</span>
+                <span className="info-value">
+                  {formatTimestamp(tokenInfo.iat)}
+                </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Expires At:</span>
-                <span className={`info-value ${expired ? 'expired' : 'valid'}`}>
+                <span className={`info-value ${expired ? "expired" : "valid"}`}>
                   {formatTimestamp(tokenInfo.exp)}
                 </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Time Until Expiry:</span>
-                <span className={`info-value ${expired ? 'expired' : getTimeUntilExpiry(tokenInfo.exp).includes('d') ? 'valid' : 'warning'}`}>
+                <span
+                  className={`info-value ${
+                    expired
+                      ? "expired"
+                      : getTimeUntilExpiry(tokenInfo.exp).includes("d")
+                      ? "valid"
+                      : "warning"
+                  }`}
+                >
                   {getTimeUntilExpiry(tokenInfo.exp)}
                 </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Not Before:</span>
-                <span className="info-value">{formatTimestamp(tokenInfo.nbf)}</span>
+                <span className="info-value">
+                  {formatTimestamp(tokenInfo.nbf)}
+                </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Subject:</span>
-                <span className="info-value">{tokenInfo.sub || 'Not provided'}</span>
+                <span className="info-value">
+                  {tokenInfo.sub || "Not provided"}
+                </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Audience:</span>
-                <span className="info-value">{tokenInfo.aud || 'Not provided'}</span>
+                <span className="info-value">
+                  {tokenInfo.aud || "Not provided"}
+                </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Issuer:</span>
-                <span className="info-value">{tokenInfo.iss || 'Not provided'}</span>
+                <span className="info-value">
+                  {tokenInfo.iss || "Not provided"}
+                </span>
               </div>
               <div className="info-item">
                 <span className="info-label">JWT ID:</span>
-                <span className="info-value">{tokenInfo.jti || 'Not provided'}</span>
+                <span className="info-value">
+                  {tokenInfo.jti || "Not provided"}
+                </span>
               </div>
             </div>
           </div>
@@ -1077,21 +1182,23 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
           <div className="output-panel">
             <div className="output-header">
               <div className="output-title header">
-                <Shield style={{ width: '1.25rem', height: '1.25rem' }} />
+                <Shield style={{ width: "1.25rem", height: "1.25rem" }} />
                 <h3>Header</h3>
               </div>
               <button
-                onClick={() => copyToClipboard(decodedHeader, 'Header')}
+                onClick={() => copyToClipboard(decodedHeader, "Header")}
                 disabled={!decodedHeader}
                 className="btn btn-secondary"
-                style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                style={{ padding: "0.5rem", fontSize: "0.75rem" }}
               >
-                <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+                <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
               </button>
             </div>
             <div className="output-content">
               {decodedHeader ? (
-                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{decodedHeader}</pre>
+                <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                  {decodedHeader}
+                </pre>
               ) : (
                 <div className="empty-state">
                   <div className="empty-icon">🛡️</div>
@@ -1105,21 +1212,23 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
           <div className="output-panel">
             <div className="output-header">
               <div className="output-title payload">
-                <User style={{ width: '1.25rem', height: '1.25rem' }} />
+                <User style={{ width: "1.25rem", height: "1.25rem" }} />
                 <h3>Payload</h3>
               </div>
               <button
-                onClick={() => copyToClipboard(decodedPayload, 'Payload')}
+                onClick={() => copyToClipboard(decodedPayload, "Payload")}
                 disabled={!decodedPayload}
                 className="btn btn-secondary"
-                style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                style={{ padding: "0.5rem", fontSize: "0.75rem" }}
               >
-                <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+                <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
               </button>
             </div>
             <div className="output-content">
               {decodedPayload ? (
-                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{decodedPayload}</pre>
+                <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                  {decodedPayload}
+                </pre>
               ) : (
                 <div className="empty-state">
                   <div className="empty-icon">👤</div>
@@ -1134,16 +1243,16 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
             <div className="output-panel signature-panel">
               <div className="output-header">
                 <div className="output-title signature">
-                  <Key style={{ width: '1.25rem', height: '1.25rem' }} />
+                  <Key style={{ width: "1.25rem", height: "1.25rem" }} />
                   <h3>Signature</h3>
                 </div>
                 <button
-                  onClick={() => copyToClipboard(signature, 'Signature')}
+                  onClick={() => copyToClipboard(signature, "Signature")}
                   disabled={!signature}
                   className="btn btn-secondary"
-                  style={{ padding: '0.5rem', fontSize: '0.75rem' }}
+                  style={{ padding: "0.5rem", fontSize: "0.75rem" }}
                 >
-                  <Copy style={{ width: '0.875rem', height: '0.875rem' }} />
+                  <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
                 </button>
               </div>
               <div className="output-content">
@@ -1161,7 +1270,15 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
         </div>
 
         {/* Info Section */}
-        <div style={{ marginTop: '2rem', padding: '2rem', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} className={isDarkMode ? 'dark-panel' : 'light-panel'}>
+        <div
+          style={{
+            marginTop: "2rem",
+            padding: "2rem",
+            borderRadius: "0.75rem",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          }}
+          className={isDarkMode ? "dark-panel" : "light-panel"}
+        >
           <style>{`
             .dark-panel {
               background-color: #1e293b;
@@ -1172,40 +1289,160 @@ const JWTTool = ({ isDarkMode = true, showNotification: externalShowNotification
               border: 1px solid #e2e8f0;
             }
           `}</style>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#f59e0b' }}>
+          <h3
+            style={{
+              fontSize: "1.25rem",
+              fontWeight: 600,
+              marginBottom: "1rem",
+              color: "#f59e0b",
+            }}
+          >
             About JSON Web Tokens (JWT)
           </h3>
-          <div style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
-              JWTs are compact, URL-safe tokens used for securely transmitting information between parties
+          <div style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            <div
+              style={{
+                marginBottom: "0.5rem",
+                color: "#6b7280",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                style={{
+                  color: "#f59e0b",
+                  fontWeight: "bold",
+                  marginTop: "0.125rem",
+                }}
+              >
+                •
+              </span>
+              JWTs are compact, URL-safe tokens used for securely transmitting
+              information between parties
             </div>
-            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
-              Consists of three parts: Header, Payload, and Signature, separated by dots (.)
+            <div
+              style={{
+                marginBottom: "0.5rem",
+                color: "#6b7280",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                style={{
+                  color: "#f59e0b",
+                  fontWeight: "bold",
+                  marginTop: "0.125rem",
+                }}
+              >
+                •
+              </span>
+              Consists of three parts: Header, Payload, and Signature, separated
+              by dots (.)
             </div>
-            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
-              Header contains metadata about the token type and signing algorithm
+            <div
+              style={{
+                marginBottom: "0.5rem",
+                color: "#6b7280",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                style={{
+                  color: "#f59e0b",
+                  fontWeight: "bold",
+                  marginTop: "0.125rem",
+                }}
+              >
+                •
+              </span>
+              Header contains metadata about the token type and signing
+              algorithm
             </div>
-            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
-              Payload contains claims (statements about an entity and additional data)
+            <div
+              style={{
+                marginBottom: "0.5rem",
+                color: "#6b7280",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                style={{
+                  color: "#f59e0b",
+                  fontWeight: "bold",
+                  marginTop: "0.125rem",
+                }}
+              >
+                •
+              </span>
+              Payload contains claims (statements about an entity and additional
+              data)
             </div>
-            <div style={{ marginBottom: '0.5rem', color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
-              Signature ensures the token hasn't been altered and verifies authenticity
+            <div
+              style={{
+                marginBottom: "0.5rem",
+                color: "#6b7280",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                style={{
+                  color: "#f59e0b",
+                  fontWeight: "bold",
+                  marginTop: "0.125rem",
+                }}
+              >
+                •
+              </span>
+              Signature ensures the token hasn't been altered and verifies
+              authenticity
             </div>
-            <div style={{ color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-              <span style={{ color: '#f59e0b', fontWeight: 'bold', marginTop: '0.125rem' }}>•</span>
-              Commonly used for authentication, authorization, and secure information exchange
+            <div
+              style={{
+                color: "#6b7280",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                style={{
+                  color: "#f59e0b",
+                  fontWeight: "bold",
+                  marginTop: "0.125rem",
+                }}
+              >
+                •
+              </span>
+              Commonly used for authentication, authorization, and secure
+              information exchange
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div style={{ textAlign: 'center', marginTop: '3rem', paddingTop: '2rem', color: '#6b7280', fontSize: '0.875rem', borderTop: '1px solid #374151' }}>
-          <p>Decode, analyze, and validate JSON Web Tokens with comprehensive token information</p>
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: "3rem",
+            paddingTop: "2rem",
+            color: "#6b7280",
+            fontSize: "0.875rem",
+            borderTop: "1px solid #374151",
+          }}
+        >
+          <p>
+            Decode, analyze, and validate JSON Web Tokens with comprehensive
+            token information
+          </p>
         </div>
       </div>
     </div>
