@@ -1125,7 +1125,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         {/* Header */}
         <div className="header">
           <div>
-            <h1 className="title">JSON Toolkit Pro</h1>
+            <h1 className="title">JSON Tool</h1>
             <p className="subtitle">Advanced JSON formatting, validation, and visualization tool</p>
           </div>
 
@@ -1423,7 +1423,7 @@ const JSONTool = ({ isDarkMode = true, showNotification: externalShowNotificatio
         {/* Footer */}
         <div className="footer">
           <p>
-            <strong>JSON Toolkit Pro</strong> - Complete JSON processing solution with formatting,
+            <strong>JSON Tool</strong> - Complete JSON processing solution with formatting,
             validation, tree visualization, search, and conversion capabilities
           </p>
         </div>
