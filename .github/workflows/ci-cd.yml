@@ -36,8 +36,8 @@ jobs:
       - name: Upload production-ready build
         uses: actions/upload-artifact@v4
         with:
-          name: production-files
-          path: ./build  
+          name: github-pages   # ✅ must be github-pages
+          path: ./build
 
   deploy:
     name: Deploy to GitHub Pages
@@ -51,10 +51,8 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: production-files
+          name: github-pages   # ✅ match upload name
           path: ./build
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}   # ✅ only input needed now
