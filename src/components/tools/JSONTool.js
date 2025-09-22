@@ -1489,7 +1489,6 @@
 
 // export default JSONTool;
 
-/* global BigInt */
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Copy,
@@ -1503,7 +1502,6 @@ import {
   Settings,
   RefreshCw,
   FileText,
-  Code,
   Search,
   Zap,
   Maximize2,
@@ -1511,7 +1509,6 @@ import {
   RotateCcw,
   Braces,
   Brackets,
-  FileJson,
   FileSpreadsheet,
   FileCode,
 } from "lucide-react";
@@ -1551,19 +1548,24 @@ const JSONTool = ({
     },
     [externalShowNotification]
   );
-
-  const parseJSON = (jsonString) => {
-    return JSON.parse(jsonString, (key, value) => {
-      if (bigNumbers) {
-        if (typeof value === "string" && value.endsWith("n")) {
-          return BigInt(value.slice(0, -1));
-        } else if (typeof value === "number" && !Number.isSafeInteger(value)) {
-          return BigInt(value);
+  const parseJSON = useCallback(
+    (jsonString) => {
+      return JSON.parse(jsonString, (key, value) => {
+        if (bigNumbers) {
+          if (typeof value === "string" && value.endsWith("n")) {
+            return BigInt(value.slice(0, -1));
+          } else if (
+            typeof value === "number" &&
+            !Number.isSafeInteger(value)
+          ) {
+            return BigInt(value);
+          }
         }
-      }
-      return value;
-    });
-  };
+        return value;
+      });
+    },
+    [bigNumbers] // depends on bigNumbers
+  );
 
   const stringifyJSON = (parsed, indent = indentSize) => {
     let replacer = (key, value) =>
@@ -1606,29 +1608,7 @@ const JSONTool = ({
     );
   };
 
-  const validateJSON = (jsonString) => {
-    try {
-      if (!jsonString.trim()) return true;
-      parseJSON(jsonString);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const calculateStats = (jsonString) => {
-    try {
-      const parsed = parseJSON(jsonString);
-      const size = new Blob([jsonString]).size;
-      const lines = jsonString.split("\n").length;
-      const keys = countKeys(parsed);
-      return { size, lines, keys };
-    } catch {
-      return { size: 0, lines: 0, keys: 0 };
-    }
-  };
-
-  const countKeys = (obj) => {
+  const countKeys = useCallback((obj) => {
     let count = 0;
     if (typeof obj === "object" && obj !== null) {
       if (Array.isArray(obj)) {
@@ -1639,7 +1619,7 @@ const JSONTool = ({
       }
     }
     return count;
-  };
+  }, []);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -2040,7 +2020,68 @@ const JSONTool = ({
     }
   };
 
+  const validateJSON = (jsonString) => {
+    try {
+      if (!jsonString.trim()) return true;
+      parseJSON(jsonString);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
+    const parseJSON = (jsonString) => {
+      return JSON.parse(jsonString, (key, value) => {
+        if (bigNumbers) {
+          if (typeof value === "string" && value.endsWith("n")) {
+            return BigInt(value.slice(0, -1));
+          } else if (
+            typeof value === "number" &&
+            !Number.isSafeInteger(value)
+          ) {
+            return BigInt(value);
+          }
+        }
+        return value;
+      });
+    };
+
+    const validateJSON = (jsonString) => {
+      try {
+        if (!jsonString.trim()) return true;
+        parseJSON(jsonString);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const countKeys = (obj) => {
+      let count = 0;
+      if (typeof obj === "object" && obj !== null) {
+        if (Array.isArray(obj)) {
+          obj.forEach((item) => (count += countKeys(item)));
+        } else {
+          count += Object.keys(obj).length;
+          Object.values(obj).forEach((value) => (count += countKeys(value)));
+        }
+      }
+      return count;
+    };
+
+    const calculateStats = (jsonString) => {
+      try {
+        const parsed = parseJSON(jsonString);
+        const size = new Blob([jsonString]).size;
+        const lines = jsonString.split("\n").length;
+        const keys = countKeys(parsed);
+        return { size, lines, keys };
+      } catch {
+        return { size: 0, lines: 0, keys: 0 };
+      }
+    };
+
     if (input) {
       const valid = validateJSON(input);
       setIsValid(valid);
@@ -2056,7 +2097,7 @@ const JSONTool = ({
       setIsValid(true);
       setStats({ size: 0, lines: 0, keys: 0 });
     }
-  }, [input, bigNumbers]);
+  }, [input, bigNumbers, parseJSON, countKeys]);
 
   return (
     <div
@@ -3273,4 +3314,4 @@ const JSONTool = ({
   );
 };
 
-export default JSONTool;
+export default JSONTool; 
