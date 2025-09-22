@@ -278,7 +278,7 @@ const Base64Tool = ({
     }
   };
 
-  const detectDataType = (data) => {
+  const detectDataType = useCallback((data) => {
     if (!data) return "text";
 
     // Check if it's valid Base64
@@ -292,7 +292,7 @@ const Base64Tool = ({
     }
 
     return "text";
-  };
+  }, []); // add dependencies if needed
 
   const isValidBase64 = (str) => {
     if (!str || str.length === 0) return false;
