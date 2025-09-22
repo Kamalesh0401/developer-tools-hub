@@ -36,8 +36,9 @@ jobs:
       - name: Upload production-ready build
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages   # ✅ must be github-pages
-          path: ./build
+          name: github-pages
+          path: ./build/**
+          if-no-files-found: error
 
   deploy:
     name: Deploy to GitHub Pages
