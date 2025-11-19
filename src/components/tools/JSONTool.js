@@ -1008,7 +1008,7 @@ const JSONTool = ({
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 1rem 1.25rem;
+          padding: 0.5rem 0.5rem;
           border-bottom: 1px solid;
           font-weight: 600;
           background: rgba(0, 0, 0, 0.05);
@@ -1230,13 +1230,6 @@ const JSONTool = ({
           color: inherit;
           padding: 0.125rem 0.25rem;
           border-radius: 0.25rem;
-        }
-        .search-container {
-          position: relative;
-        }
-       
-        .search-input {
-          padding-left: 2.5rem;
         }
        
         .search-icon {
@@ -1470,12 +1463,9 @@ const JSONTool = ({
       <div className="header">
         <div>
           <h1 className="title">
-            <FileJson size={32} />
+            {/* <FileJson size={32} /> */}
             JSON Tool
           </h1>
-          <p className="subtitle">
-            Professional JSON editor with advanced features
-          </p>
         </div>
         <div className="header-controls">
           <button
@@ -1707,14 +1697,13 @@ const JSONTool = ({
               <span>Output {isTreeMode ? "(Tree View)" : ""}</span>
             </div>
             <div className="panel-controls">
-              <div className="search-container">
-                <Search className="search-icon" size={16} />
+              <div>
                 <input
                   type="text"
                   placeholder="Search JSON..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="input search-input"
+                  className="input"
                 />
               </div>
               <button

@@ -9,7 +9,7 @@ import './App.css';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('JSON');
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const { notifications, showNotification, removeNotification } = useNotification();
 
   const renderActiveComponent = () => {

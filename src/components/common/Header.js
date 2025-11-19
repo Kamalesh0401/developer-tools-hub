@@ -11,8 +11,8 @@ const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
         {/* Left Section */}
         <div className="header-left">
           <div className="header-nav-icons">
-            <ChevronLeft className="nav-icon" />
-            <ChevronRight className="nav-icon" />
+            {/* <ChevronLeft className="nav-icon" />
+            <ChevronRight className="nav-icon" /> */}
           </div>
           <h1 className={`header-title ${isDarkMode ? 'dark' : 'ight'}`}>Developer Tools Hub</h1>
         </div>
