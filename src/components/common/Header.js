@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Moon, Sun } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import './Header.css';
 
 const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
@@ -14,7 +14,7 @@ const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
             {/* <ChevronLeft className="nav-icon" />
             <ChevronRight className="nav-icon" /> */}
           </div>
-          <h1 className={`header-title ${isDarkMode ? 'dark' : 'ight'}`}>Developer Tools Hub</h1>
+          <h1 className={`header-title ${isDarkMode ? 'dark' : 'light'}`}>Developer Tools Hub</h1>
         </div>
 
         {/* Right Section */}
