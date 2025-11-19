@@ -53,18 +53,12 @@ const JSONTool = ({
   const [compactMode, setCompactMode] = useState(false);
   const [wordWrap, setWordWrap] = useState(true);
   const [highlightSyntax, setHighlightSyntax] = useState(true);
-  const [history, setHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
   const [fontSize, setFontSize] = useState(14);
   const [showMinimap, setShowMinimap] = useState(false);
-  const [compareMode, setCompareMode] = useState(false);
-  const [compareInput, setCompareInput] = useState("");
   const [showSidebar, setShowSidebar] = useState(true);
   const textareaRef = useRef(null);
   const highlightRef = useRef(null);
   const outputRef = useRef(null);
-  const compareTextareaRef = useRef(null);
-  const compareHighlightRef = useRef(null);
 
   const showNotification = useCallback(
     (message, type = "success") => {
@@ -96,6 +90,20 @@ const JSONTool = ({
     },
     [bigNumbers]
   );
+  const sortObjectKeys = useCallback((obj) => {
+    if (Array.isArray(obj)) {
+      return obj.map(sortObjectKeys);
+    } else if (obj !== null && typeof obj === "object") {
+      const sorted = {};
+      Object.keys(obj)
+        .sort()
+        .forEach((key) => {
+          sorted[key] = sortObjectKeys(obj[key]);
+        });
+      return sorted;
+    }
+    return obj;
+  }, []); // no dependencies needed
 
   const stringifyJSON = useCallback(
     (parsed, indent = indentSize) => {
@@ -113,29 +121,15 @@ const JSONTool = ({
       }
       return formatted;
     },
-    [indentSize, sortKeys, escapeUnicode]
+    [indentSize, sortKeys, escapeUnicode, sortObjectKeys]
   );
 
-  const sortObjectKeys = (obj) => {
-    if (Array.isArray(obj)) {
-      return obj.map(sortObjectKeys);
-    } else if (obj !== null && typeof obj === "object") {
-      const sorted = {};
-      Object.keys(obj)
-        .sort()
-        .forEach((key) => {
-          sorted[key] = sortObjectKeys(obj[key]);
-        });
-      return sorted;
-    }
-    return obj;
-  };
-
-  const getDepth = (obj, current = 0) => {
+  const getDepth = useCallback((obj, current = 0) => {
     if (typeof obj !== "object" || obj === null) return current;
+
     const depths = Object.values(obj).map((val) => getDepth(val, current + 1));
     return Math.max(current, ...depths);
-  };
+  }, []);
 
   const minifyJSON = (jsonString) => {
     const parsed = parseJSON(jsonString);
@@ -157,17 +151,6 @@ const JSONTool = ({
     return count;
   }, []);
 
-  const addToHistory = useCallback(
-    (value) => {
-      setHistory((prev) => {
-        const newHistory = [...prev.slice(0, historyIndex + 1), value];
-        return newHistory.slice(-20); // Keep last 20 states
-      });
-      setHistoryIndex((prev) => Math.min(prev + 1, 19));
-    },
-    [historyIndex]
-  );
-
   const handleInputChange = (e) => {
     const value = e.target.value;
     setInput(value);
@@ -188,10 +171,6 @@ const JSONTool = ({
     }
   };
 
-  const handleCompareInputChange = (e) => {
-    setCompareInput(e.target.value);
-  };
-
   const handleFormat = () => {
     setIsTreeMode(false);
     if (!validateJSON(input)) {
@@ -203,7 +182,6 @@ const JSONTool = ({
       const parsed = parseJSON(input);
       const formatted = stringifyJSON(parsed);
       setOutput(formatted);
-      addToHistory(formatted);
       setError("");
       showNotification("JSON formatted successfully!", "success");
     } catch (err) {
@@ -221,7 +199,6 @@ const JSONTool = ({
     try {
       const minified = minifyJSON(input);
       setOutput(minified);
-      addToHistory(minified);
       setError("");
       showNotification("JSON minified successfully!", "success");
     } catch (err) {
@@ -236,7 +213,6 @@ const JSONTool = ({
     setError("");
     setSearchTerm("");
     setTreeView({});
-    setCompareInput("");
     showNotification("Cleared successfully!", "info");
   };
 
@@ -523,36 +499,24 @@ const JSONTool = ({
     }
   };
 
-  const validateJSON = (jsonString) => {
-    try {
-      if (!jsonString.trim()) return true;
-      parseJSON(jsonString);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleUndo = () => {
-    if (historyIndex > 0) {
-      setHistoryIndex((prev) => prev - 1);
-      setOutput(history[historyIndex - 1]);
-      showNotification("Undo applied", "info");
-    }
-  };
-
-  const handleRedo = () => {
-    if (historyIndex < history.length - 1) {
-      setHistoryIndex((prev) => prev + 1);
-      setOutput(history[historyIndex + 1]);
-      showNotification("Redo applied", "info");
-    }
-  };
+  const validateJSON = useCallback(
+    (jsonString) => {
+      try {
+        if (!jsonString.trim()) return true;
+        parseJSON(jsonString);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [parseJSON]
+  );
 
   useEffect(() => {
     if (input) {
       const valid = validateJSON(input);
       setIsValid(valid);
+
       if (valid) {
         setError("");
         try {
@@ -561,6 +525,7 @@ const JSONTool = ({
           const lines = input.split("\n").length;
           const keys = countKeys(parsed);
           const depth = getDepth(parsed);
+
           setStats({ size, lines, keys, depth });
         } catch {
           setStats({ size: 0, lines: 0, keys: 0, depth: 0 });
@@ -574,12 +539,12 @@ const JSONTool = ({
       setIsValid(true);
       setStats({ size: 0, lines: 0, keys: 0, depth: 0 });
     }
-  }, [input, bigNumbers, parseJSON, countKeys]);
+  }, [input, bigNumbers, validateJSON, parseJSON, countKeys, getDepth]);
 
   useEffect(() => {
     if (isTreeMode && output) {
       try {
-        const parsed = parseJSON(output);
+        //const parsed = parseJSON(output);
         setTreeView({ "": true }); // Reset tree view
       } catch {}
     }
@@ -1542,11 +1507,7 @@ const JSONTool = ({
           </select>
         </div>
       </div>
-      <div
-        className={`main-layout ${compareMode ? "compare-mode" : ""} ${
-          showSidebar ? "show-sidebar" : ""
-        }`}
-      >
+      <div className={`main-layout ${showSidebar ? "show-sidebar" : ""}`}>
         <div className="panel">
           <div className="panel-header">
             <div className="panel-title">
