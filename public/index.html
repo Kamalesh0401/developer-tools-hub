@@ -13,71 +13,16 @@
       name="description"
       content="Developer Tools Hub provides fast, privacy-first online utilities for developers: JSON formatter & validator, JWT decoder, Base64 encoder/decoder. No signup required — all processing happens in your browser."
     />
-    <meta
-      name="keywords"
-      content="JSON formatter, JSON validator, JWT decoder, Base64 encoder, Base64 decoder, developer tools, online utilities"
-    />
-    <meta name="author" content="Developer Tools Hub" />
 
-    <!-- Crawling / indexing hints -->
-    <meta name="robots" content="index, follow" />
-    <meta
-      name="googlebot"
-      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
-    />
-    <meta name="referrer" content="no-referrer-when-downgrade" />
-
-    <!-- Canonical: update to your production URL if different -->
+    <!-- Canonical -->
     <link rel="canonical" href="https://developer-tools-hub.netlify.app/" />
-    <link
-      rel="alternate"
-      hreflang="en"
-      href="https://developer-tools-hub.netlify.app/"
-    />
 
-    <!-- Social preview (Open Graph / Twitter) -->
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Developer Tools Hub" />
-    <meta
-      property="og:title"
-      content="Developer Tools Hub — JSON Formatter, JWT Decoder & Base64 Tools"
-    />
-    <meta
-      property="og:description"
-      content="Fast, privacy-first developer utilities: JSON formatter, JWT decoder, Base64 encoder/decoder — all run in your browser with no signup."
-    />
-    <meta
-      property="og:url"
-      content="https://developer-tools-hub.netlify.app/"
-    />
-    <meta property="og:image" content="%PUBLIC_URL%/og-image.jpg" />
-    <meta
-      property="og:image:alt"
-      content="Developer Tools Hub — JSON Formatter, JWT Decoder, Base64 Tools"
-    />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <!-- Favicons -->
+    <link rel="icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" href="logo192.png" />
+    <link rel="manifest" href="manifest.json" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Developer Tools Hub — JSON Formatter, JWT Decoder & Base64 Tools"
-    />
-    <meta
-      name="twitter:description"
-      content="Fast, privacy-first developer utilities: JSON formatter, JWT decoder, Base64 encoder/decoder — no signup."
-    />
-    <meta name="twitter:image" content="%PUBLIC_URL%/og-image.jpg" />
-    <!-- Replace with your Twitter handle if available -->
-    <meta name="twitter:site" content="@YourTwitterHandle" />
-
-    <!-- Favicons & manifest -->
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-
-    <!-- Preconnect & fonts (improves LCP / performance) -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -85,22 +30,15 @@
       rel="stylesheet"
     />
 
-    <!-- Hint to search engines where your sitemap is (ensure /sitemap.xml exists) -->
-    <link
-      rel="sitemap"
-      type="application/xml"
-      title="Sitemap"
-      href="/sitemap.xml"
-    />
+    <!-- Sitemap -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
-    <!-- Minimal critical CSS to render the loading view quickly -->
+    <!-- Loading Screen Styles -->
     <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
+      * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
       }
       html,
       body,
@@ -108,12 +46,9 @@
         height: 100%;
       }
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Inter", sans-serif;
+        font-family: "Inter", sans-serif;
         background: #0b1220;
         color: #f9fafb;
-        line-height: 1.5;
-        -webkit-font-smoothing: antialiased;
       }
       .loading-container {
         display: flex;
@@ -121,9 +56,6 @@
         justify-content: center;
         min-height: 100vh;
         padding: 24px;
-      }
-      .loading-card {
-        text-align: center;
       }
       .loading-spinner {
         width: 44px;
@@ -148,52 +80,6 @@
         font-size: 15px;
       }
     </style>
-
-    <!-- Structured data (JSON-LD) — update URLs/logo as needed -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "WebSite",
-            "@id": "https://developer-tools-hub.netlify.app/#website",
-            "url": "https://developer-tools-hub.netlify.app/",
-            "name": "Developer Tools Hub",
-            "description": "Fast, privacy-first online utilities for developers: JSON formatter, JWT decoder, Base64 encoder/decoder.",
-            "potentialAction": {
-              "@type": "SearchAction",
-              "target": "https://developer-tools-hub.netlify.app/?q={search_term_string}",
-              "query-input": "required name=search_term_string"
-            }
-          },
-          {
-            "@type": "Organization",
-            "@id": "https://developer-tools-hub.netlify.app/#organization",
-            "name": "Developer Tools Hub",
-            "url": "https://developer-tools-hub.netlify.app/",
-            "logo": "%PUBLIC_URL%/logo192.png",
-            "sameAs": []
-          },
-          {
-            "@type": "SoftwareApplication",
-            "@id": "https://developer-tools-hub.netlify.app/#software",
-            "name": "Developer Tools Hub",
-            "url": "https://developer-tools-hub.netlify.app/",
-            "description": "Web-based developer utilities: JSON formatter & validator, JWT decoder, Base64 encoder/decoder. Client-side processing for privacy.",
-            "applicationCategory": "DeveloperTool",
-            "operatingSystem": "Web",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD",
-              "availability": "https://schema.org/InStock"
-            }
-          }
-        ]
-      }
-    </script>
-
-    <!-- Important: use client-side route meta management (react-helmet or react-helmet-async) to provide unique titles/descriptions per tool/route. -->
   </head>
 
   <body>
@@ -201,53 +87,38 @@
       <div
         style="
           text-align: center;
-          padding: 48px;
+          padding: 40px;
           background: #0f1724;
-          color: #fff;
           min-height: 100vh;
         "
       >
         <h1>JavaScript Required</h1>
-        <p>
-          This application requires JavaScript. Please enable JavaScript to use
-          the Developer Tools Hub (JSON formatter, JWT decoder, Base64
-          encoder/decoder).
-        </p>
+        <p>Please enable JavaScript to use Developer Tools Hub.</p>
       </div>
     </noscript>
 
     <div id="root">
-      <div class="loading-container" role="status" aria-live="polite">
-        <div class="loading-card">
-          <div class="loading-spinner" aria-hidden="true"></div>
-          <div class="loading-text">
-            Loading Developer Tools Hub — JSON, JWT & Base64 tools…
-          </div>
+      <div class="loading-container">
+        <div>
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Loading Developer Tools Hub…</div>
         </div>
       </div>
     </div>
 
-    <!-- Service Worker (registers after load). Keep path as %PUBLIC_URL%/sw.js for CRA builds. -->
+    <!-- Service Worker (optional) -->
     <script>
       if ("serviceWorker" in navigator) {
-        window.addEventListener("load", function () {
-          try {
-            navigator.serviceWorker
-              .register("%PUBLIC_URL%/sw.js")
-              .then(function (registration) {
-                console.log("Service Worker registered:", registration);
-              })
-              .catch(function (err) {
-                console.warn("SW registration failed:", err);
-              });
-          } catch (e) {
-            console.warn("SW registration error:", e);
-          }
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((reg) => console.log("SW registered:", reg))
+            .catch((err) => console.warn("SW registration failed:", err));
         });
       }
     </script>
 
-    <!-- Analytics placeholder: replace with your GA / Plausible / Fathom snippet if you use them (respect privacy). -->
+    <!-- Console -->
     <script>
       console.log("Developer Tools Hub loaded");
     </script>
