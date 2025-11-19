@@ -1,6 +1,5 @@
 {
   "name": "developer-tools-hub",
-  "homepage": "/developer-tools-hub/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
