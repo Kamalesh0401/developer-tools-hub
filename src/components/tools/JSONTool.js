@@ -1,5 +1,6 @@
 /* global BigInt */
 import { useState, useEffect, useCallback, useRef } from "react";
+import SEO from "../seo/SEO";
 import {
   Copy,
   AlertCircle,
@@ -549,12 +550,19 @@ const JSONTool = ({
   }, [isTreeMode, output, parseJSON]);
 
   return (
-    <div
-      className={`json-tool-container ${isDarkMode ? "dark" : "light"} ${
-        isFullscreen ? "fullscreen" : ""
-      } ${compactMode ? "compact" : ""}`}
-    >
-      <style>{`
+    <>
+      <SEO
+        title="JSON Viewer Online - Developer Tools Hub"
+        description="Free online JSON Viewer and Formatter. Paste your JSON to view, format, and validate instantly."
+        keywords="json viewer online, json formatter, json validator, developer tools hub"
+        url="https://developer-tools-hub.netlify.app/json-viewer"
+      />
+      <div
+        className={`json-tool-container ${isDarkMode ? "dark" : "light"} ${
+          isFullscreen ? "fullscreen" : ""
+        } ${compactMode ? "compact" : ""}`}
+      >
+        <style>{`
         .json-tool-container {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           min-height: 100vh;
@@ -1450,234 +1458,426 @@ const JSONTool = ({
           background: rgba(245, 158, 11, 0.2);
         }
       `}</style>
-      {notification && (
-        <div className={`notification ${notification.type}`}>
-          {notification.type === "success" && <CheckCircle size={20} />}
-          {notification.type === "error" && <AlertCircle size={20} />}
-          {notification.type === "info" && <RefreshCw size={20} />}
-          <span>{notification.message}</span>
+        {notification && (
+          <div className={`notification ${notification.type}`}>
+            {notification.type === "success" && <CheckCircle size={20} />}
+            {notification.type === "error" && <AlertCircle size={20} />}
+            {notification.type === "info" && <RefreshCw size={20} />}
+            <span>{notification.message}</span>
+          </div>
+        )}
+        <div className="header">
+          <div>
+            <h1 className="title">
+              {/* <FileJson size={32} /> */}
+              JSON Tool
+            </h1>
+          </div>
+          <div className="header-controls">
+            <button
+              onClick={() => setShowSidebar(!showSidebar)}
+              className="btn btn-toggle mobile-menu-btn"
+            >
+              <Menu size={16} />
+            </button>
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="btn btn-toggle"
+            >
+              {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+            </button>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className={`btn btn-toggle ${showSettings ? "active" : ""}`}
+            >
+              <Settings size={16} />
+            </button>
+            <select
+              value={indentSize}
+              onChange={(e) => setIndentSize(Number(e.target.value))}
+              className="select"
+            >
+              <option value={2}>2 Spaces</option>
+              <option value={4}>4 Spaces</option>
+              <option value={8}>8 Spaces</option>
+            </select>
+          </div>
         </div>
-      )}
-      <div className="header">
-        <div>
-          <h1 className="title">
-            {/* <FileJson size={32} /> */}
-            JSON Tool
-          </h1>
-        </div>
-        <div className="header-controls">
-          <button
-            onClick={() => setShowSidebar(!showSidebar)}
-            className="btn btn-toggle mobile-menu-btn"
-          >
-            <Menu size={16} />
-          </button>
-          <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="btn btn-toggle"
-          >
-            {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-          </button>
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className={`btn btn-toggle ${showSettings ? "active" : ""}`}
-          >
-            <Settings size={16} />
-          </button>
-          <select
-            value={indentSize}
-            onChange={(e) => setIndentSize(Number(e.target.value))}
-            className="select"
-          >
-            <option value={2}>2 Spaces</option>
-            <option value={4}>4 Spaces</option>
-            <option value={8}>8 Spaces</option>
-          </select>
-        </div>
-      </div>
-      <div className={`main-layout ${showSidebar ? "show-sidebar" : ""}`}>
-        <div className="panel">
-          <div className="panel-header">
-            <div className="panel-title">
-              <Code size={18} />
-              <span>Input JSON</span>
-              {input && (
-                <span
-                  className={`status-badge ${isValid ? "valid" : "invalid"}`}
+        <div className={`main-layout ${showSidebar ? "show-sidebar" : ""}`}>
+          <div className="panel">
+            <div className="panel-header">
+              <div className="panel-title">
+                <Code size={18} />
+                <span>Input JSON</span>
+                {input && (
+                  <span
+                    className={`status-badge ${isValid ? "valid" : "invalid"}`}
+                  >
+                    {isValid ? (
+                      <CheckCircle size={12} />
+                    ) : (
+                      <AlertCircle size={12} />
+                    )}
+                    {isValid ? "Valid" : "Invalid"}
+                  </span>
+                )}
+              </div>
+              <div className="panel-controls">
+                <label
+                  className="btn btn-secondary btn-icon"
+                  title="Upload JSON"
                 >
-                  {isValid ? (
-                    <CheckCircle size={12} />
-                  ) : (
-                    <AlertCircle size={12} />
-                  )}
-                  {isValid ? "Valid" : "Invalid"}
-                </span>
+                  <Upload size={16} />
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileUpload}
+                    className="file-input"
+                  />
+                </label>
+                <button
+                  onClick={() => copyToClipboard(input)}
+                  disabled={!input}
+                  className="btn btn-secondary btn-icon"
+                  title="Copy Input"
+                >
+                  <Copy size={16} />
+                </button>
+                <button
+                  onClick={() => setInput("")}
+                  disabled={!input}
+                  className="btn btn-danger btn-icon"
+                  title="Clear Input"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+            <div className="panel-content">
+              <div
+                className="editor-container"
+                style={{ fontSize: `${fontSize}px` }}
+              >
+                <pre
+                  ref={highlightRef}
+                  className="highlight-overlay"
+                  dangerouslySetInnerHTML={{
+                    __html: highlightJSON(addLineNumbers(input)),
+                  }}
+                />
+                <textarea
+                  ref={textareaRef}
+                  className="textarea"
+                  value={input}
+                  onChange={handleInputChange}
+                  onScroll={() => handleScroll(textareaRef, highlightRef)}
+                  placeholder=""
+                  style={{
+                    color: "transparent",
+                    background: "transparent",
+                    caretColor: isDarkMode ? "#e2e8f0" : "#1e293b",
+                    wordWrap: wordWrap ? "break-word" : "normal",
+                    whiteSpace: wordWrap ? "pre-wrap" : "pre",
+                  }}
+                />
+                {showMinimap && (
+                  <div className="minimap">
+                    <pre>
+                      {highlightJSON(highlightSearch(addLineNumbers(input)))}
+                    </pre>
+                  </div>
+                )}
+              </div>
+              {error && (
+                <div className="error-message">
+                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                  <span>{error}</span>
+                </div>
               )}
             </div>
-            <div className="panel-controls">
-              <label className="btn btn-secondary btn-icon" title="Upload JSON">
-                <Upload size={16} />
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleFileUpload}
-                  className="file-input"
-                />
-              </label>
-              <button
-                onClick={() => copyToClipboard(input)}
-                disabled={!input}
-                className="btn btn-secondary btn-icon"
-                title="Copy Input"
-              >
-                <Copy size={16} />
-              </button>
-              <button
-                onClick={() => setInput("")}
-                disabled={!input}
-                className="btn btn-danger btn-icon"
-                title="Clear Input"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
           </div>
-          <div className="panel-content">
+          {showSidebar && (
+            <div className={`middle-controls ${showSidebar ? "open" : ""}`}>
+              <div className="controls-group">
+                <div className="controls-group-title">
+                  <Zap size={14} />
+                  Quick Actions
+                </div>
+                <button
+                  onClick={handleFormat}
+                  disabled={!input || !isValid}
+                  className="btn btn-primary"
+                >
+                  <Braces size={16} />
+                  Format
+                </button>
+                <button
+                  onClick={handleMinify}
+                  disabled={!input || !isValid}
+                  className="btn btn-secondary"
+                >
+                  <Brackets size={16} />
+                  Minify
+                </button>
+                <button
+                  onClick={() => {
+                    setIsTreeMode(!isTreeMode);
+                    if (!isTreeMode && input) handleFormat();
+                  }}
+                  className={`btn btn-toggle ${
+                    isTreeMode ? "active green" : ""
+                  }`}
+                >
+                  <FileText size={16} />
+                  Tree View
+                </button>
+                <button onClick={handleClear} className="btn btn-danger">
+                  <Trash2 size={16} />
+                  Clear All
+                </button>
+              </div>
+              <div className="controls-group">
+                <div className="controls-group-title">
+                  <FileCode size={14} />
+                  Convert
+                </div>
+                <button
+                  onClick={convertToXML}
+                  disabled={!input || !isValid}
+                  className="btn btn-success"
+                >
+                  <FileCode size={16} />
+                  To XML
+                </button>
+                <button
+                  onClick={convertToCSV}
+                  disabled={!input || !isValid}
+                  className="btn btn-success"
+                >
+                  <FileSpreadsheet size={16} />
+                  To CSV
+                </button>
+              </div>
+              <div className="controls-group">
+                <div className="controls-group-title">
+                  <Settings size={14} />
+                  Toggles
+                </div>
+                <label className="checkbox-group">
+                  <div
+                    className={`checkbox ${autoUpdate ? "checked" : ""}`}
+                    onClick={() => setAutoUpdate(!autoUpdate)}
+                  />
+                  Auto Update
+                </label>
+                <label className="checkbox-group">
+                  <div
+                    className={`checkbox ${bigNumbers ? "checked" : ""}`}
+                    onClick={() => setBigNumbers(!bigNumbers)}
+                  />
+                  Big Numbers
+                </label>
+                <label className="checkbox-group">
+                  <div
+                    className={`checkbox ${sortKeys ? "checked" : ""}`}
+                    onClick={() => setSortKeys(!sortKeys)}
+                  />
+                  Sort Keys
+                </label>
+                <label className="checkbox-group">
+                  <div
+                    className={`checkbox ${escapeUnicode ? "checked" : ""}`}
+                    onClick={() => setEscapeUnicode(!escapeUnicode)}
+                  />
+                  Escape Unicode
+                </label>
+                <label className="checkbox-group">
+                  <div
+                    className={`checkbox ${compactMode ? "checked" : ""}`}
+                    onClick={() => setCompactMode(!compactMode)}
+                  />
+                  Compact Mode
+                </label>
+              </div>
+            </div>
+          )}
+          <div className="panel">
+            <div className="panel-header">
+              <div className="panel-title">
+                <FileText size={18} />
+                <span>Output {isTreeMode ? "(Tree View)" : ""}</span>
+              </div>
+              <div className="panel-controls">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Search JSON..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="input"
+                  />
+                </div>
+                <button
+                  onClick={expanAllFields}
+                  disabled={!output}
+                  className="btn btn-secondary btn-icon"
+                  title="Expand All Fields"
+                >
+                  <Expand size={16} />
+                </button>
+                <button
+                  onClick={copyToClipboard}
+                  disabled={!output}
+                  className="btn btn-secondary btn-icon"
+                  title="Copy Output"
+                >
+                  <Copy size={16} />
+                </button>
+                <button
+                  onClick={downloadJSON}
+                  disabled={!output}
+                  className="btn btn-success btn-icon"
+                  title="Download Output"
+                >
+                  <Download size={16} />
+                </button>
+                <button
+                  onClick={() => setOutput("")}
+                  disabled={!output}
+                  className="btn btn-danger btn-icon"
+                  title="Clear Output"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
             <div
-              className="editor-container"
+              className="panel-content"
+              ref={outputRef}
               style={{ fontSize: `${fontSize}px` }}
             >
-              <pre
-                ref={highlightRef}
-                className="highlight-overlay"
-                dangerouslySetInnerHTML={{
-                  __html: highlightJSON(highlightSearch(addLineNumbers(input))),
-                }}
-              />
-              <textarea
-                ref={textareaRef}
-                className="textarea"
-                value={input}
-                onChange={handleInputChange}
-                onScroll={() => handleScroll(textareaRef, highlightRef)}
-                placeholder=""
-                style={{
-                  color: "transparent",
-                  background: "transparent",
-                  caretColor: isDarkMode ? "#e2e8f0" : "#1e293b",
-                  wordWrap: wordWrap ? "break-word" : "normal",
-                  whiteSpace: wordWrap ? "pre-wrap" : "pre",
-                }}
-              />
-              {showMinimap && (
+              {output ? (
+                isTreeMode ? (
+                  <div className="output-area">
+                    {renderTreeView(parseJSON(output))}
+                  </div>
+                ) : (
+                  <div className="output-area">
+                    <pre
+                      dangerouslySetInnerHTML={{
+                        __html: highlightJSON(
+                          highlightSearch(addLineNumbers(output))
+                        ),
+                      }}
+                    />
+                  </div>
+                )
+              ) : (
+                <div className="empty-state">
+                  {/* <div className="empty-icon">📄</div> */}
+                  <p>
+                    {/* No output yet. Format or minify your JSON to see results here. */}
+                  </p>
+                </div>
+              )}
+              {showMinimap && output && !isTreeMode && (
                 <div className="minimap">
                   <pre>
-                    {highlightJSON(highlightSearch(addLineNumbers(input)))}
+                    {highlightJSON(highlightSearch(addLineNumbers(output)))}
                   </pre>
                 </div>
               )}
             </div>
-            {error && (
-              <div className="error-message">
-                <AlertCircle size={16} style={{ flexShrink: 0 }} />
-                <span>{error}</span>
-              </div>
-            )}
           </div>
         </div>
-        {showSidebar && (
-          <div className={`middle-controls ${showSidebar ? "open" : ""}`}>
-            <div className="controls-group">
-              <div className="controls-group-title">
-                <Zap size={14} />
-                Quick Actions
-              </div>
+        <div className="stats">
+          <div className="stat-item">
+            <div className="stat-value blue">{stats.size}</div>
+            <div className="stat-label">Bytes</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value green">{stats.lines}</div>
+            <div className="stat-label">Lines</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value purple">{stats.keys}</div>
+            <div className="stat-label">Properties</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value orange">{stats.depth}</div>
+            <div className="stat-label">Depth</div>
+          </div>
+          <div className="stat-item">
+            <div className={`stat-value ${isValid ? "green" : "red"}`}>
+              {isValid ? "✓" : "✗"}
+            </div>
+            <div className="stat-label">Valid</div>
+          </div>
+        </div>
+        {showSettings && (
+          <div className={`settings-panel ${showSettings ? "open" : ""}`}>
+            <div className="settings-header">
+              <h2 className="settings-title">Settings</h2>
               <button
-                onClick={handleFormat}
-                disabled={!input || !isValid}
-                className="btn btn-primary"
+                onClick={() => setShowSettings(false)}
+                className="btn btn-icon btn-danger"
               >
-                <Braces size={16} />
-                Format
-              </button>
-              <button
-                onClick={handleMinify}
-                disabled={!input || !isValid}
-                className="btn btn-secondary"
-              >
-                <Brackets size={16} />
-                Minify
-              </button>
-              <button
-                onClick={() => {
-                  setIsTreeMode(!isTreeMode);
-                  if (!isTreeMode && input) handleFormat();
-                }}
-                className={`btn btn-toggle ${isTreeMode ? "active green" : ""}`}
-              >
-                <FileText size={16} />
-                Tree View
-              </button>
-              <button onClick={handleClear} className="btn btn-danger">
-                <Trash2 size={16} />
-                Clear All
+                <X size={20} />
               </button>
             </div>
             <div className="controls-group">
               <div className="controls-group-title">
-                <FileCode size={14} />
-                Convert
+                <Type size={16} />
+                Editor
               </div>
-              <button
-                onClick={convertToXML}
-                disabled={!input || !isValid}
-                className="btn btn-success"
-              >
-                <FileCode size={16} />
-                To XML
-              </button>
-              <button
-                onClick={convertToCSV}
-                disabled={!input || !isValid}
-                className="btn btn-success"
-              >
-                <FileSpreadsheet size={16} />
-                To CSV
-              </button>
+              <div className="slider-container">
+                <div className="slider-label">
+                  <span>Font Size: {fontSize}px</span>
+                </div>
+                <input
+                  type="range"
+                  min="10"
+                  max="24"
+                  value={fontSize}
+                  onChange={(e) => setFontSize(Number(e.target.value))}
+                  className="slider"
+                />
+              </div>
+              <label className="checkbox-group">
+                <div
+                  className={`checkbox ${lineNumbers ? "checked" : ""}`}
+                  onClick={() => setLineNumbers(!lineNumbers)}
+                />
+                Line Numbers
+              </label>
+              <label className="checkbox-group">
+                <div
+                  className={`checkbox ${wordWrap ? "checked" : ""}`}
+                  onClick={() => setWordWrap(!wordWrap)}
+                />
+                Word Wrap
+              </label>
+              <label className="checkbox-group">
+                <div
+                  className={`checkbox ${highlightSyntax ? "checked" : ""}`}
+                  onClick={() => setHighlightSyntax(!highlightSyntax)}
+                />
+                Syntax Highlighting
+              </label>
+              <label className="checkbox-group">
+                <div
+                  className={`checkbox ${showMinimap ? "checked" : ""}`}
+                  onClick={() => setShowMinimap(!showMinimap)}
+                />
+                Show Minimap
+              </label>
             </div>
+            <div className="controls-divider"></div>
             <div className="controls-group">
               <div className="controls-group-title">
-                <Settings size={14} />
-                Toggles
+                <Palette size={16} />
+                Display
               </div>
-              <label className="checkbox-group">
-                <div
-                  className={`checkbox ${autoUpdate ? "checked" : ""}`}
-                  onClick={() => setAutoUpdate(!autoUpdate)}
-                />
-                Auto Update
-              </label>
-              <label className="checkbox-group">
-                <div
-                  className={`checkbox ${bigNumbers ? "checked" : ""}`}
-                  onClick={() => setBigNumbers(!bigNumbers)}
-                />
-                Big Numbers
-              </label>
-              <label className="checkbox-group">
-                <div
-                  className={`checkbox ${sortKeys ? "checked" : ""}`}
-                  onClick={() => setSortKeys(!sortKeys)}
-                />
-                Sort Keys
-              </label>
-              <label className="checkbox-group">
-                <div
-                  className={`checkbox ${escapeUnicode ? "checked" : ""}`}
-                  onClick={() => setEscapeUnicode(!escapeUnicode)}
-                />
-                Escape Unicode
-              </label>
               <label className="checkbox-group">
                 <div
                   className={`checkbox ${compactMode ? "checked" : ""}`}
@@ -1688,195 +1888,9 @@ const JSONTool = ({
             </div>
           </div>
         )}
-        <div className="panel">
-          <div className="panel-header">
-            <div className="panel-title">
-              <FileText size={18} />
-              <span>Output {isTreeMode ? "(Tree View)" : ""}</span>
-            </div>
-            <div className="panel-controls">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Search JSON..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="input"
-                />
-              </div>
-              <button
-                onClick={expanAllFields}
-                disabled={!output}
-                className="btn btn-secondary btn-icon"
-                title="Expand All Fields"
-              >
-                <Expand size={16} />
-              </button>
-              <button
-                onClick={copyToClipboard}
-                disabled={!output}
-                className="btn btn-secondary btn-icon"
-                title="Copy Output"
-              >
-                <Copy size={16} />
-              </button>
-              <button
-                onClick={downloadJSON}
-                disabled={!output}
-                className="btn btn-success btn-icon"
-                title="Download Output"
-              >
-                <Download size={16} />
-              </button>
-              <button
-                onClick={() => setOutput("")}
-                disabled={!output}
-                className="btn btn-danger btn-icon"
-                title="Clear Output"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          </div>
-          <div
-            className="panel-content"
-            ref={outputRef}
-            style={{ fontSize: `${fontSize}px` }}
-          >
-            {output ? (
-              isTreeMode ? (
-                <div className="output-area">
-                  {renderTreeView(parseJSON(output))}
-                </div>
-              ) : (
-                <div className="output-area">
-                  <pre
-                    dangerouslySetInnerHTML={{
-                      __html: highlightJSON(
-                        highlightSearch(addLineNumbers(output))
-                      ),
-                    }}
-                  />
-                </div>
-              )
-            ) : (
-              <div className="empty-state">
-                {/* <div className="empty-icon">📄</div> */}
-                <p>
-                  {/* No output yet. Format or minify your JSON to see results here. */}
-                </p>
-              </div>
-            )}
-            {showMinimap && output && !isTreeMode && (
-              <div className="minimap">
-                <pre>
-                  {highlightJSON(highlightSearch(addLineNumbers(output)))}
-                </pre>
-              </div>
-            )}
-          </div>
-        </div>
+        <div className="footer">© 2025 Developer Tools Hub - JSON Tool</div>
       </div>
-      <div className="stats">
-        <div className="stat-item">
-          <div className="stat-value blue">{stats.size}</div>
-          <div className="stat-label">Bytes</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-value green">{stats.lines}</div>
-          <div className="stat-label">Lines</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-value purple">{stats.keys}</div>
-          <div className="stat-label">Properties</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-value orange">{stats.depth}</div>
-          <div className="stat-label">Depth</div>
-        </div>
-        <div className="stat-item">
-          <div className={`stat-value ${isValid ? "green" : "red"}`}>
-            {isValid ? "✓" : "✗"}
-          </div>
-          <div className="stat-label">Valid</div>
-        </div>
-      </div>
-      {showSettings && (
-        <div className={`settings-panel ${showSettings ? "open" : ""}`}>
-          <div className="settings-header">
-            <h2 className="settings-title">Settings</h2>
-            <button
-              onClick={() => setShowSettings(false)}
-              className="btn btn-icon btn-danger"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          <div className="controls-group">
-            <div className="controls-group-title">
-              <Type size={16} />
-              Editor
-            </div>
-            <div className="slider-container">
-              <div className="slider-label">
-                <span>Font Size: {fontSize}px</span>
-              </div>
-              <input
-                type="range"
-                min="10"
-                max="24"
-                value={fontSize}
-                onChange={(e) => setFontSize(Number(e.target.value))}
-                className="slider"
-              />
-            </div>
-            <label className="checkbox-group">
-              <div
-                className={`checkbox ${lineNumbers ? "checked" : ""}`}
-                onClick={() => setLineNumbers(!lineNumbers)}
-              />
-              Line Numbers
-            </label>
-            <label className="checkbox-group">
-              <div
-                className={`checkbox ${wordWrap ? "checked" : ""}`}
-                onClick={() => setWordWrap(!wordWrap)}
-              />
-              Word Wrap
-            </label>
-            <label className="checkbox-group">
-              <div
-                className={`checkbox ${highlightSyntax ? "checked" : ""}`}
-                onClick={() => setHighlightSyntax(!highlightSyntax)}
-              />
-              Syntax Highlighting
-            </label>
-            <label className="checkbox-group">
-              <div
-                className={`checkbox ${showMinimap ? "checked" : ""}`}
-                onClick={() => setShowMinimap(!showMinimap)}
-              />
-              Show Minimap
-            </label>
-          </div>
-          <div className="controls-divider"></div>
-          <div className="controls-group">
-            <div className="controls-group-title">
-              <Palette size={16} />
-              Display
-            </div>
-            <label className="checkbox-group">
-              <div
-                className={`checkbox ${compactMode ? "checked" : ""}`}
-                onClick={() => setCompactMode(!compactMode)}
-              />
-              Compact Mode
-            </label>
-          </div>
-        </div>
-      )}
-      <div className="footer">© 2025 Developer Tools Hub - JSON Tool</div>
-    </div>
+    </>
   );
 };
 

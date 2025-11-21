@@ -1,149 +1,5 @@
-// import React, { useState, useEffect } from 'react';
-// import { Copy, AlertCircle, Key, User, Shield } from 'lucide-react';
-// import { decodeJWT, validateJWT } from '../../utils/jwtUtils';
-// import './JWTTool.css';
-
-// const JWTTool = ({ isDarkMode, showNotification }) => {
-//   const [token, setToken] = useState('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
-//   const [decodedHeader, setDecodedHeader] = useState('');
-//   const [decodedPayload, setDecodedPayload] = useState('');
-//   const [signature, setSignature] = useState('');
-//   const [error, setError] = useState('');
-//   const [tokenInfo, setTokenInfo] = useState(null);
-
-//   const handleDecode = () => {
-//     try {
-//       const result = decodeJWT(token);
-//       setDecodedHeader(JSON.stringify(result.header, null, 2));
-//       setDecodedPayload(JSON.stringify(result.payload, null, 2));
-//       setSignature(result.signature);
-//       setTokenInfo(result.info);
-//       setError('');
-//       showNotification('JWT decoded successfully!', 'success');
-//     } catch (err) {
-//       setError(err.message);
-//       setDecodedHeader('');
-//       setDecodedPayload('');
-//       setSignature('');
-//       setTokenInfo(null);
-//       showNotification('Invalid JWT token', 'error');
-//     }
-//   };
-
-//   const copyToClipboard = async (content, section) => {
-//     try {
-//       await navigator.clipboard.writeText(content);
-//       showNotification(`${section} copied to clipboard!`, 'success');
-//     } catch (err) {
-//       showNotification('Failed to copy', 'error');
-//     }
-//   };
-
-//   const formatTimestamp = (timestamp) => {
-//     if (!timestamp) return 'Not provided';
-//     const date = new Date(timestamp * 1000);
-//     return date.toLocaleString();
-//   };
-
-//   const isTokenExpired = (exp) => {
-//     if (!exp) return false;
-//     return Date.now() >= exp * 1000;
-//   };
-
-//   useEffect(() => {
-//     if (token) {
-//       handleDecode();
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     if (token) {
-//       try {
-//         validateJWT(token);
-//         setError('');
-//       } catch (err) {
-//         setError(err.message);
-//       }
-//     }
-//   }, [token]);
-
-//   return (
-//     <div className={`jwt-tool ${isDarkMode ? 'dark' : ''}`}>
-//       <div className="title-section">
-//         <h2>JWT Decoder</h2>
-//         <p>Decode and analyze JSON Web Tokens</p>
-//       </div>
-
-//       <div className="input-section">
-//         <div className="input-header">
-//           <span>
-//             <Key /> JWT Token
-//             {!error && token && <span className="valid">✓ Valid JWT</span>}
-//           </span>
-//           <button onClick={handleDecode}>Decode</button>
-//         </div>
-//         <textarea value={token} onChange={e => setToken(e.target.value)} placeholder="Paste your JWT token here..." />
-//         {token && (
-//           <div className={`absolute top-2 right-2 ${error ? 'invalid' : 'valid'}`}>
-//             {error ? 'Invalid' : 'Valid JWT'}
-//           </div>
-//         )}
-//         {error && <div className="error-box"><AlertCircle /> <div className="error-text">{error}</div></div>}
-//       </div>
-
-//       {tokenInfo && (
-//         <div className="token-info">
-//           <h3><User /> Token Information</h3>
-//           <div className="grid">
-//             <div>Algorithm: <span>{tokenInfo.algorithm}</span></div>
-//             <div>Type: <span>{tokenInfo.type}</span></div>
-//             <div>Issued At: <span>{formatTimestamp(tokenInfo.iat)}</span></div>
-//             <div>Expires At: <span>{formatTimestamp(tokenInfo.exp)}</span></div>
-//             <div>Not Before: <span>{formatTimestamp(tokenInfo.nbf)}</span></div>
-//             <div>Subject: <span>{tokenInfo.sub || 'Not provided'}</span></div>
-//           </div>
-//         </div>
-//       )}
-
-//       <div className="output-section">
-//         <div className="section">
-//           <div className="section-header">
-//             <span><Shield /> Header</span>
-//             <button className="header-btn" onClick={() => copyToClipboard(decodedHeader, 'Header')}>Copy</button>
-//           </div>
-//           <div className="section-content header">
-//             {decodedHeader ? <pre>{decodedHeader}</pre> : <div className="placeholder">JWT header will appear here</div>}
-//           </div>
-//         </div>
-
-//         <div className="section">
-//           <div className="section-header">
-//             <span><User /> Payload</span>
-//             <button className="payload-btn" onClick={() => copyToClipboard(decodedPayload, 'Payload')}>Copy</button>
-//           </div>
-//           <div className="section-content payload">
-//             {decodedPayload ? <pre>{decodedPayload}</pre> : <div className="placeholder">JWT payload will appear here</div>}
-//           </div>
-//         </div>
-
-//         <div className="section">
-//           <div className="section-header">
-//             <span><Key /> Signature</span>
-//             <button className="signature-btn" onClick={() => copyToClipboard(signature, 'Signature')}>Copy</button>
-//           </div>
-//           <div className="section-content signature">
-//             {signature ? <pre>{signature}</pre> : <div className="placeholder">JWT signature will appear here</div>}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-
-//   );
-// };
-
-// export default JWTTool;
-
 import React, { useState, useEffect, useCallback } from "react";
+import SEO from "../seo/SEO";
 import {
   Copy,
   AlertCircle,
@@ -416,8 +272,15 @@ const JWTTool = ({
   const expired = tokenInfo?.exp ? isTokenExpired(tokenInfo.exp) : false;
 
   return (
-    <div className={`jwt-tool-container ${isDarkMode ? "dark" : "light"}`}>
-      <style>{`
+    <>
+      <SEO
+        title="JWT Decoder Online - Developer Tools Hub"
+        description="Decode and inspect your JWT tokens instantly using our online JWT Decoder tool."
+        keywords="jwt decoder online, jwt token decoder, jwt parser, developer tools"
+        url="https://developer-tools-hub.netlify.app/jwt-decoder"
+      />
+      <div className={`jwt-tool-container ${isDarkMode ? "dark" : "light"}`}>
+        <style>{`
         .jwt-tool-container {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           min-height: 100vh;
@@ -944,311 +807,252 @@ const JWTTool = ({
         }
       `}</style>
 
-      {/* Notification */}
-      {notification && (
-        <div className={`notification ${notification.type}`}>
-          {notification.type === "success" && (
-            <CheckCircle style={{ width: "1.25rem", height: "1.25rem" }} />
-          )}
-          {notification.type === "error" && (
-            <AlertCircle style={{ width: "1.25rem", height: "1.25rem" }} />
-          )}
-          <span>{notification.message}</span>
-        </div>
-      )}
-
-      <div className="container">
-        {/* Header */}
-        <div className="header">
-          <div>
-            <h1 className="title">JWT Tool</h1>
-            <p className="subtitle">
-              Decode and analyze JSON Web Tokens with comprehensive details
-            </p>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="stats">
-          <div className="stat-item">
-            <div className="stat-value blue">{stats.totalSize}</div>
-            <div className="stat-label">Total Size</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-value purple">{stats.headerSize}</div>
-            <div className="stat-label">Header</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-value green">{stats.payloadSize}</div>
-            <div className="stat-label">Payload</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-value orange">{stats.signatureSize}</div>
-            <div className="stat-label">Signature</div>
-          </div>
-          <div className="stat-item">
-            <div
-              className={`stat-value ${
-                isValid ? (expired ? "orange" : "green") : "red"
-              }`}
-            >
-              {!token.trim()
-                ? "Empty"
-                : isValid
-                ? expired
-                  ? "Expired"
-                  : "Valid"
-                : "Invalid"}
-            </div>
-            <div className="stat-label">Status</div>
-          </div>
-        </div>
-
-        {/* Controls */}
-        <div className="controls">
-          <button onClick={clearAll} className="btn btn-danger">
-            <Trash2 style={{ width: "1rem", height: "1rem" }} />
-            Clear
-          </button>
-
-          <button
-            onClick={downloadJWT}
-            disabled={!decodedHeader || !decodedPayload}
-            className="btn btn-secondary"
-          >
-            <Download style={{ width: "1rem", height: "1rem" }} />
-            Download
-          </button>
-
-          <button
-            onClick={() => setShowSignature(!showSignature)}
-            className={`btn btn-toggle ${showSignature ? "active" : ""}`}
-          >
-            {showSignature ? (
-              <EyeOff style={{ width: "1rem", height: "1rem" }} />
-            ) : (
-              <Eye style={{ width: "1rem", height: "1rem" }} />
+        {/* Notification */}
+        {notification && (
+          <div className={`notification ${notification.type}`}>
+            {notification.type === "success" && (
+              <CheckCircle style={{ width: "1.25rem", height: "1.25rem" }} />
             )}
-            {showSignature ? "Hide" : "Show"} Signature
-          </button>
-        </div>
-
-        {/* Input Section */}
-        <div className="input-section">
-          <div className="input-panel">
-            <div className="input-header">
-              <div className="input-title">
-                <Key style={{ width: "1.25rem", height: "1.25rem" }} />
-                <h3>JWT Token</h3>
-                {token && (
-                  <span
-                    className={`status-badge ${
-                      isValid ? (expired ? "expired" : "valid") : "invalid"
-                    }`}
-                  >
-                    {isValid ? (
-                      expired ? (
-                        <Clock
-                          style={{ width: "0.75rem", height: "0.75rem" }}
-                        />
-                      ) : (
-                        <CheckCircle
-                          style={{ width: "0.75rem", height: "0.75rem" }}
-                        />
-                      )
-                    ) : (
-                      <AlertCircle
-                        style={{ width: "0.75rem", height: "0.75rem" }}
-                      />
-                    )}
-                    {isValid ? (expired ? "Expired" : "Valid") : "Invalid"}
-                  </span>
-                )}
-              </div>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <button
-                  onClick={() => copyToClipboard(token, "Token")}
-                  disabled={!token}
-                  className="btn btn-secondary"
-                  style={{ padding: "0.5rem", fontSize: "0.75rem" }}
-                >
-                  <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
-                </button>
-              </div>
-            </div>
-
-            <textarea
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              placeholder="Paste your JWT token here..."
-              className="textarea"
-            />
-
-            {error && (
-              <div className="error-message">
-                <AlertCircle
-                  style={{
-                    width: "1rem",
-                    height: "1rem",
-                    marginTop: "0.125rem",
-                    flexShrink: 0,
-                  }}
-                />
-                <span>{error}</span>
-              </div>
+            {notification.type === "error" && (
+              <AlertCircle style={{ width: "1.25rem", height: "1.25rem" }} />
             )}
-          </div>
-        </div>
-
-        {/* Token Information */}
-        {tokenInfo && (
-          <div className="token-info">
-            <h3 className="info-title">
-              <User style={{ width: "1.25rem", height: "1.25rem" }} />
-              Token Information
-            </h3>
-            <div className="info-grid">
-              <div className="info-item">
-                <span className="info-label">Algorithm:</span>
-                <span className="info-value">{tokenInfo.algorithm}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Type:</span>
-                <span className="info-value">{tokenInfo.type}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Issued At:</span>
-                <span className="info-value">
-                  {formatTimestamp(tokenInfo.iat)}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Expires At:</span>
-                <span className={`info-value ${expired ? "expired" : "valid"}`}>
-                  {formatTimestamp(tokenInfo.exp)}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Time Until Expiry:</span>
-                <span
-                  className={`info-value ${
-                    expired
-                      ? "expired"
-                      : getTimeUntilExpiry(tokenInfo.exp).includes("d")
-                      ? "valid"
-                      : "warning"
-                  }`}
-                >
-                  {getTimeUntilExpiry(tokenInfo.exp)}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Not Before:</span>
-                <span className="info-value">
-                  {formatTimestamp(tokenInfo.nbf)}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Subject:</span>
-                <span className="info-value">
-                  {tokenInfo.sub || "Not provided"}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Audience:</span>
-                <span className="info-value">
-                  {tokenInfo.aud || "Not provided"}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Issuer:</span>
-                <span className="info-value">
-                  {tokenInfo.iss || "Not provided"}
-                </span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">JWT ID:</span>
-                <span className="info-value">
-                  {tokenInfo.jti || "Not provided"}
-                </span>
-              </div>
-            </div>
+            <span>{notification.message}</span>
           </div>
         )}
 
-        {/* Output Sections */}
-        <div className="output-grid">
-          {/* Header Section */}
-          <div className="output-panel">
-            <div className="output-header">
-              <div className="output-title header">
-                <Shield style={{ width: "1.25rem", height: "1.25rem" }} />
-                <h3>Header</h3>
-              </div>
-              <button
-                onClick={() => copyToClipboard(decodedHeader, "Header")}
-                disabled={!decodedHeader}
-                className="btn btn-secondary"
-                style={{ padding: "0.5rem", fontSize: "0.75rem" }}
-              >
-                <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
-              </button>
-            </div>
-            <div className="output-content">
-              {decodedHeader ? (
-                <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-                  {decodedHeader}
-                </pre>
-              ) : (
-                <div className="empty-state">
-                  <div className="empty-icon">🛡️</div>
-                  <div>JWT header will appear here</div>
-                </div>
-              )}
+        <div className="container">
+          {/* Header */}
+          <div className="header">
+            <div>
+              <h1 className="title">JWT Tool</h1>
+              <p className="subtitle">
+                Decode and analyze JSON Web Tokens with comprehensive details
+              </p>
             </div>
           </div>
 
-          {/* Payload Section */}
-          <div className="output-panel">
-            <div className="output-header">
-              <div className="output-title payload">
-                <User style={{ width: "1.25rem", height: "1.25rem" }} />
-                <h3>Payload</h3>
-              </div>
-              <button
-                onClick={() => copyToClipboard(decodedPayload, "Payload")}
-                disabled={!decodedPayload}
-                className="btn btn-secondary"
-                style={{ padding: "0.5rem", fontSize: "0.75rem" }}
-              >
-                <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
-              </button>
+          {/* Stats */}
+          <div className="stats">
+            <div className="stat-item">
+              <div className="stat-value blue">{stats.totalSize}</div>
+              <div className="stat-label">Total Size</div>
             </div>
-            <div className="output-content">
-              {decodedPayload ? (
-                <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-                  {decodedPayload}
-                </pre>
-              ) : (
-                <div className="empty-state">
-                  <div className="empty-icon">👤</div>
-                  <div>JWT payload will appear here</div>
-                </div>
-              )}
+            <div className="stat-item">
+              <div className="stat-value purple">{stats.headerSize}</div>
+              <div className="stat-label">Header</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value green">{stats.payloadSize}</div>
+              <div className="stat-label">Payload</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value orange">{stats.signatureSize}</div>
+              <div className="stat-label">Signature</div>
+            </div>
+            <div className="stat-item">
+              <div
+                className={`stat-value ${
+                  isValid ? (expired ? "orange" : "green") : "red"
+                }`}
+              >
+                {!token.trim()
+                  ? "Empty"
+                  : isValid
+                  ? expired
+                    ? "Expired"
+                    : "Valid"
+                  : "Invalid"}
+              </div>
+              <div className="stat-label">Status</div>
             </div>
           </div>
 
-          {/* Signature Section */}
-          {showSignature && (
-            <div className="output-panel signature-panel">
-              <div className="output-header">
-                <div className="output-title signature">
+          {/* Controls */}
+          <div className="controls">
+            <button onClick={clearAll} className="btn btn-danger">
+              <Trash2 style={{ width: "1rem", height: "1rem" }} />
+              Clear
+            </button>
+
+            <button
+              onClick={downloadJWT}
+              disabled={!decodedHeader || !decodedPayload}
+              className="btn btn-secondary"
+            >
+              <Download style={{ width: "1rem", height: "1rem" }} />
+              Download
+            </button>
+
+            <button
+              onClick={() => setShowSignature(!showSignature)}
+              className={`btn btn-toggle ${showSignature ? "active" : ""}`}
+            >
+              {showSignature ? (
+                <EyeOff style={{ width: "1rem", height: "1rem" }} />
+              ) : (
+                <Eye style={{ width: "1rem", height: "1rem" }} />
+              )}
+              {showSignature ? "Hide" : "Show"} Signature
+            </button>
+          </div>
+
+          {/* Input Section */}
+          <div className="input-section">
+            <div className="input-panel">
+              <div className="input-header">
+                <div className="input-title">
                   <Key style={{ width: "1.25rem", height: "1.25rem" }} />
-                  <h3>Signature</h3>
+                  <h3>JWT Token</h3>
+                  {token && (
+                    <span
+                      className={`status-badge ${
+                        isValid ? (expired ? "expired" : "valid") : "invalid"
+                      }`}
+                    >
+                      {isValid ? (
+                        expired ? (
+                          <Clock
+                            style={{ width: "0.75rem", height: "0.75rem" }}
+                          />
+                        ) : (
+                          <CheckCircle
+                            style={{ width: "0.75rem", height: "0.75rem" }}
+                          />
+                        )
+                      ) : (
+                        <AlertCircle
+                          style={{ width: "0.75rem", height: "0.75rem" }}
+                        />
+                      )}
+                      {isValid ? (expired ? "Expired" : "Valid") : "Invalid"}
+                    </span>
+                  )}
+                </div>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <button
+                    onClick={() => copyToClipboard(token, "Token")}
+                    disabled={!token}
+                    className="btn btn-secondary"
+                    style={{ padding: "0.5rem", fontSize: "0.75rem" }}
+                  >
+                    <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
+                  </button>
+                </div>
+              </div>
+
+              <textarea
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                placeholder="Paste your JWT token here..."
+                className="textarea"
+              />
+
+              {error && (
+                <div className="error-message">
+                  <AlertCircle
+                    style={{
+                      width: "1rem",
+                      height: "1rem",
+                      marginTop: "0.125rem",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span>{error}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Token Information */}
+          {tokenInfo && (
+            <div className="token-info">
+              <h3 className="info-title">
+                <User style={{ width: "1.25rem", height: "1.25rem" }} />
+                Token Information
+              </h3>
+              <div className="info-grid">
+                <div className="info-item">
+                  <span className="info-label">Algorithm:</span>
+                  <span className="info-value">{tokenInfo.algorithm}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Type:</span>
+                  <span className="info-value">{tokenInfo.type}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Issued At:</span>
+                  <span className="info-value">
+                    {formatTimestamp(tokenInfo.iat)}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Expires At:</span>
+                  <span
+                    className={`info-value ${expired ? "expired" : "valid"}`}
+                  >
+                    {formatTimestamp(tokenInfo.exp)}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Time Until Expiry:</span>
+                  <span
+                    className={`info-value ${
+                      expired
+                        ? "expired"
+                        : getTimeUntilExpiry(tokenInfo.exp).includes("d")
+                        ? "valid"
+                        : "warning"
+                    }`}
+                  >
+                    {getTimeUntilExpiry(tokenInfo.exp)}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Not Before:</span>
+                  <span className="info-value">
+                    {formatTimestamp(tokenInfo.nbf)}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Subject:</span>
+                  <span className="info-value">
+                    {tokenInfo.sub || "Not provided"}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Audience:</span>
+                  <span className="info-value">
+                    {tokenInfo.aud || "Not provided"}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Issuer:</span>
+                  <span className="info-value">
+                    {tokenInfo.iss || "Not provided"}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">JWT ID:</span>
+                  <span className="info-value">
+                    {tokenInfo.jti || "Not provided"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Output Sections */}
+          <div className="output-grid">
+            {/* Header Section */}
+            <div className="output-panel">
+              <div className="output-header">
+                <div className="output-title header">
+                  <Shield style={{ width: "1.25rem", height: "1.25rem" }} />
+                  <h3>Header</h3>
                 </div>
                 <button
-                  onClick={() => copyToClipboard(signature, "Signature")}
-                  disabled={!signature}
+                  onClick={() => copyToClipboard(decodedHeader, "Header")}
+                  disabled={!decodedHeader}
                   className="btn btn-secondary"
                   style={{ padding: "0.5rem", fontSize: "0.75rem" }}
                 >
@@ -1256,30 +1060,91 @@ const JWTTool = ({
                 </button>
               </div>
               <div className="output-content">
-                {signature ? (
-                  <div className="signature-content">{signature}</div>
+                {decodedHeader ? (
+                  <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                    {decodedHeader}
+                  </pre>
                 ) : (
                   <div className="empty-state">
-                    <div className="empty-icon">🔑</div>
-                    <div>JWT signature will appear here</div>
+                    <div className="empty-icon">🛡️</div>
+                    <div>JWT header will appear here</div>
                   </div>
                 )}
               </div>
             </div>
-          )}
-        </div>
 
-        {/* Info Section */}
-        <div
-          style={{
-            marginTop: "2rem",
-            padding: "2rem",
-            borderRadius: "0.75rem",
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-          }}
-          className={isDarkMode ? "dark-panel" : "light-panel"}
-        >
-          <style>{`
+            {/* Payload Section */}
+            <div className="output-panel">
+              <div className="output-header">
+                <div className="output-title payload">
+                  <User style={{ width: "1.25rem", height: "1.25rem" }} />
+                  <h3>Payload</h3>
+                </div>
+                <button
+                  onClick={() => copyToClipboard(decodedPayload, "Payload")}
+                  disabled={!decodedPayload}
+                  className="btn btn-secondary"
+                  style={{ padding: "0.5rem", fontSize: "0.75rem" }}
+                >
+                  <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
+                </button>
+              </div>
+              <div className="output-content">
+                {decodedPayload ? (
+                  <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
+                    {decodedPayload}
+                  </pre>
+                ) : (
+                  <div className="empty-state">
+                    <div className="empty-icon">👤</div>
+                    <div>JWT payload will appear here</div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Signature Section */}
+            {showSignature && (
+              <div className="output-panel signature-panel">
+                <div className="output-header">
+                  <div className="output-title signature">
+                    <Key style={{ width: "1.25rem", height: "1.25rem" }} />
+                    <h3>Signature</h3>
+                  </div>
+                  <button
+                    onClick={() => copyToClipboard(signature, "Signature")}
+                    disabled={!signature}
+                    className="btn btn-secondary"
+                    style={{ padding: "0.5rem", fontSize: "0.75rem" }}
+                  >
+                    <Copy style={{ width: "0.875rem", height: "0.875rem" }} />
+                  </button>
+                </div>
+                <div className="output-content">
+                  {signature ? (
+                    <div className="signature-content">{signature}</div>
+                  ) : (
+                    <div className="empty-state">
+                      <div className="empty-icon">🔑</div>
+                      <div>JWT signature will appear here</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Info Section */}
+          <div
+            style={{
+              marginTop: "2rem",
+              padding: "2rem",
+              borderRadius: "0.75rem",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            }}
+            className={isDarkMode ? "dark-panel" : "light-panel"}
+          >
+            <style>{`
             .dark-panel {
               background-color: #1e293b;
               border: 1px solid #334155;
@@ -1289,163 +1154,164 @@ const JWTTool = ({
               border: 1px solid #e2e8f0;
             }
           `}</style>
-          <h3
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 600,
-              marginBottom: "1rem",
-              color: "#f59e0b",
-            }}
-          >
-            About JSON Web Tokens (JWT)
-          </h3>
-          <div style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            <div
+            <h3
               style={{
-                marginBottom: "0.5rem",
-                color: "#6b7280",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "0.5rem",
+                fontSize: "1.25rem",
+                fontWeight: 600,
+                marginBottom: "1rem",
+                color: "#f59e0b",
               }}
             >
-              <span
+              About JSON Web Tokens (JWT)
+            </h3>
+            <div style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              <div
                 style={{
-                  color: "#f59e0b",
-                  fontWeight: "bold",
-                  marginTop: "0.125rem",
+                  marginBottom: "0.5rem",
+                  color: "#6b7280",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.5rem",
                 }}
               >
-                •
-              </span>
-              JWTs are compact, URL-safe tokens used for securely transmitting
-              information between parties
-            </div>
-            <div
-              style={{
-                marginBottom: "0.5rem",
-                color: "#6b7280",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "0.5rem",
-              }}
-            >
-              <span
+                <span
+                  style={{
+                    color: "#f59e0b",
+                    fontWeight: "bold",
+                    marginTop: "0.125rem",
+                  }}
+                >
+                  •
+                </span>
+                JWTs are compact, URL-safe tokens used for securely transmitting
+                information between parties
+              </div>
+              <div
                 style={{
-                  color: "#f59e0b",
-                  fontWeight: "bold",
-                  marginTop: "0.125rem",
+                  marginBottom: "0.5rem",
+                  color: "#6b7280",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.5rem",
                 }}
               >
-                •
-              </span>
-              Consists of three parts: Header, Payload, and Signature, separated
-              by dots (.)
-            </div>
-            <div
-              style={{
-                marginBottom: "0.5rem",
-                color: "#6b7280",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "0.5rem",
-              }}
-            >
-              <span
+                <span
+                  style={{
+                    color: "#f59e0b",
+                    fontWeight: "bold",
+                    marginTop: "0.125rem",
+                  }}
+                >
+                  •
+                </span>
+                Consists of three parts: Header, Payload, and Signature,
+                separated by dots (.)
+              </div>
+              <div
                 style={{
-                  color: "#f59e0b",
-                  fontWeight: "bold",
-                  marginTop: "0.125rem",
+                  marginBottom: "0.5rem",
+                  color: "#6b7280",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.5rem",
                 }}
               >
-                •
-              </span>
-              Header contains metadata about the token type and signing
-              algorithm
-            </div>
-            <div
-              style={{
-                marginBottom: "0.5rem",
-                color: "#6b7280",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "0.5rem",
-              }}
-            >
-              <span
+                <span
+                  style={{
+                    color: "#f59e0b",
+                    fontWeight: "bold",
+                    marginTop: "0.125rem",
+                  }}
+                >
+                  •
+                </span>
+                Header contains metadata about the token type and signing
+                algorithm
+              </div>
+              <div
                 style={{
-                  color: "#f59e0b",
-                  fontWeight: "bold",
-                  marginTop: "0.125rem",
+                  marginBottom: "0.5rem",
+                  color: "#6b7280",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.5rem",
                 }}
               >
-                •
-              </span>
-              Payload contains claims (statements about an entity and additional
-              data)
-            </div>
-            <div
-              style={{
-                marginBottom: "0.5rem",
-                color: "#6b7280",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "0.5rem",
-              }}
-            >
-              <span
+                <span
+                  style={{
+                    color: "#f59e0b",
+                    fontWeight: "bold",
+                    marginTop: "0.125rem",
+                  }}
+                >
+                  •
+                </span>
+                Payload contains claims (statements about an entity and
+                additional data)
+              </div>
+              <div
                 style={{
-                  color: "#f59e0b",
-                  fontWeight: "bold",
-                  marginTop: "0.125rem",
+                  marginBottom: "0.5rem",
+                  color: "#6b7280",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.5rem",
                 }}
               >
-                •
-              </span>
-              Signature ensures the token hasn't been altered and verifies
-              authenticity
-            </div>
-            <div
-              style={{
-                color: "#6b7280",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "0.5rem",
-              }}
-            >
-              <span
+                <span
+                  style={{
+                    color: "#f59e0b",
+                    fontWeight: "bold",
+                    marginTop: "0.125rem",
+                  }}
+                >
+                  •
+                </span>
+                Signature ensures the token hasn't been altered and verifies
+                authenticity
+              </div>
+              <div
                 style={{
-                  color: "#f59e0b",
-                  fontWeight: "bold",
-                  marginTop: "0.125rem",
+                  color: "#6b7280",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.5rem",
                 }}
               >
-                •
-              </span>
-              Commonly used for authentication, authorization, and secure
-              information exchange
+                <span
+                  style={{
+                    color: "#f59e0b",
+                    fontWeight: "bold",
+                    marginTop: "0.125rem",
+                  }}
+                >
+                  •
+                </span>
+                Commonly used for authentication, authorization, and secure
+                information exchange
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div
-          style={{
-            textAlign: "center",
-            marginTop: "3rem",
-            paddingTop: "2rem",
-            color: "#6b7280",
-            fontSize: "0.875rem",
-            borderTop: "1px solid #374151",
-          }}
-        >
-          <p>
-            Decode, analyze, and validate JSON Web Tokens with comprehensive
-            token information
-          </p>
+          {/* Footer */}
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "3rem",
+              paddingTop: "2rem",
+              color: "#6b7280",
+              fontSize: "0.875rem",
+              borderTop: "1px solid #374151",
+            }}
+          >
+            <p>
+              Decode, analyze, and validate JSON Web Tokens with comprehensive
+              token information
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
