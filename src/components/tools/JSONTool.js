@@ -318,7 +318,6 @@ const JSONTool = ({
     xml += `</${rootName}>`;
     return xml;
   };
-
   const convertToCSV = () => {
     if (!validateJSON(input)) {
       setError("Invalid JSON");
@@ -543,8 +542,7 @@ const JSONTool = ({
   useEffect(() => {
     if (isTreeMode && output) {
       try {
-        //const parsed = parseJSON(output);
-        setTreeView({ "": true }); // Reset tree view
+        setTreeView({ "": true });
       } catch {}
     }
   }, [isTreeMode, output, parseJSON]);
@@ -563,14 +561,19 @@ const JSONTool = ({
         } ${compactMode ? "compact" : ""}`}
       >
         <style>{`
+        * {
+          box-sizing: border-box;
+        }
+        
         .json-tool-container {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
           min-height: 100vh;
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           border-radius: 1.25rem;
           position: relative;
           display: flex;
           flex-direction: column;
+          padding: clamp(0.5rem, 2vw, 1.5rem);
         }
        
         .json-tool-container.fullscreen {
@@ -580,44 +583,49 @@ const JSONTool = ({
           right: 0;
           bottom: 0;
           z-index: 9999;
-          padding: 1rem;
           border-radius: 0;
           margin: 0;
         }
        
         .json-tool-container.dark {
-          background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+          background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 50%, #0f1419 100%);
           color: #e2e8f0;
         }
        
         .json-tool-container.light {
-          background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+          background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f8fafc 100%);
           color: #1e293b;
         }
+        
         .json-tool-container.compact .header,
         .json-tool-container.compact .stats {
-          padding: 0.5rem;
+          padding: clamp(0.5rem, 1.5vw, 0.75rem);
         }
+        
+        /* Enhanced Notification */
         .notification {
           position: fixed;
-          top: 1rem;
-          right: 1rem;
+          top: clamp(0.5rem, 2vw, 1rem);
+          right: clamp(0.5rem, 2vw, 1rem);
           z-index: 10000;
-          padding: 1rem 1.5rem;
-          border-radius: 0.75rem;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+          padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+          border-radius: 1rem;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.4);
           color: white;
-          font-weight: 500;
+          font-weight: 600;
+          font-size: clamp(0.875rem, 1.5vw, 1rem);
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          animation: slideIn 0.3s ease;
-          backdrop-filter: blur(10px);
+          gap: 0.75rem;
+          animation: slideInBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          backdrop-filter: blur(20px);
+          border: 2px solid rgba(255,255,255,0.1);
         }
        
-        @keyframes slideIn {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
+        @keyframes slideInBounce {
+          0% { transform: translateX(120%) scale(0.8); opacity: 0; }
+          60% { transform: translateX(-10%) scale(1.05); opacity: 1; }
+          100% { transform: translateX(0) scale(1); }
         }
        
         .notification.success {
@@ -629,99 +637,136 @@ const JSONTool = ({
         .notification.info {
           background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         }
+        
+        /* Enhanced Header */
         .header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1rem;
+          margin-bottom: clamp(0.75rem, 2vw, 1.5rem);
           flex-wrap: wrap;
-          gap: 1rem;
-          padding: 1.5rem;
-          border-radius: 1.25rem;
-          backdrop-filter: blur(10px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+          gap: clamp(0.75rem, 2vw, 1.25rem);
+          padding: clamp(1rem, 3vw, 1.5rem);
+          border-radius: 1rem;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
           position: relative;
+          overflow: hidden;
+        }
+        
+        .header::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+          background-size: 200% 100%;
+          animation: gradientShift 3s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
         }
        
         .json-tool-container.dark .header {
-          background: rgba(26, 31, 46, 0.8);
-          border: 1px solid rgba(47, 51, 64, 0.3);
+          background: rgba(26, 31, 46, 0.85);
+          border: 1px solid rgba(100, 116, 139, 0.2);
         }
        
         .json-tool-container.light .header {
-          background: rgba(255, 255, 255, 0.9);
-          border: 1px solid rgba(226, 232, 240, 0.5);
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(226, 232, 240, 0.6);
         }
        
         .title {
-          font-size: 2rem;
-          font-weight: bold;
+          font-size: clamp(1.5rem, 4vw, 2rem);
+          font-weight: 800;
           margin: 0;
-          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+          background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-       
-        .subtitle {
-          color: #64748b;
-          margin: 0.5rem 0 0 0;
-          font-size: 0.95rem;
-        }
-        .header-controls {
+          background-clip: text;
           display: flex;
           align-items: center;
           gap: 0.75rem;
+          letter-spacing: -0.5px;
+        }
+       
+        .header-controls {
+          display: flex;
+          align-items: center;
+          gap: clamp(0.5rem, 1.5vw, 0.75rem);
           flex-wrap: wrap;
         }
+        
+        /* Enhanced Stats */
         .stats {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-          gap: 1rem;
-          margin-top: 1rem;
-          margin-bottom: 1rem;
-          padding: 1rem;
-          border-radius: 1.25rem;
-          backdrop-filter: blur(10px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+          grid-template-columns: repeat(auto-fit, minmax(clamp(100px, 20vw, 140px), 1fr));
+          gap: clamp(0.75rem, 2vw, 1rem);
+          margin-bottom: clamp(0.75rem, 2vw, 1.5rem);
+          margin-top: clamp(0.75rem, 2vw, 1.5rem);
+          padding: clamp(0.75rem, 2vw, 1rem);
+          border-radius: 1rem;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
         }
        
         .json-tool-container.dark .stats {
-          background: rgba(26, 31, 46, 0.8);
-          border: 1px solid rgba(47, 51, 64, 0.3);
+          background: rgba(26, 31, 46, 0.85);
+          border: 1px solid rgba(100, 116, 139, 0.2);
         }
        
         .json-tool-container.light .stats {
-          background: rgba(255, 255, 255, 0.9);
-          border: 1px solid rgba(226, 232, 240, 0.5);
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(226, 232, 240, 0.6);
         }
        
         .stat-item {
           text-align: center;
-          padding: 0.75rem;
-          border-radius: 0.75rem;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          padding: clamp(0.75rem, 2vw, 1rem);
+          border-radius: 0.875rem;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .stat-item::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+          transition: left 0.5s;
         }
        
         .stat-item:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+        }
+        
+        .stat-item:hover::before {
+          left: 100%;
         }
        
         .json-tool-container.dark .stat-item {
-          background: rgba(15, 20, 25, 0.6);
+          background: rgba(15, 20, 25, 0.7);
         }
        
         .json-tool-container.light .stat-item {
-          background: rgba(248, 250, 252, 0.8);
+          background: rgba(248, 250, 252, 0.9);
         }
        
         .stat-value {
-          font-size: 1.75rem;
-          font-weight: bold;
+          font-size: clamp(1.5rem, 3vw, 2rem);
+          font-weight: 800;
           margin-bottom: 0.25rem;
+          line-height: 1;
         }
        
         .stat-value.blue { color: #3b82f6; }
@@ -731,69 +776,81 @@ const JSONTool = ({
         .stat-value.orange { color: #f59e0b; }
        
         .stat-label {
-          font-size: 0.875rem;
+          font-size: clamp(0.75rem, 1.5vw, 0.875rem);
           color: #64748b;
-          font-weight: 500;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
+        
+        /* Enhanced Middle Controls */
         .middle-controls {
-          padding: 1.5rem;
-          border-radius: 1.25rem;
-          backdrop-filter: blur(10px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+          padding: clamp(1rem, 2.5vw, 1.5rem);
+          border-radius: 1rem;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
           display: flex;
           flex-direction: column;
-          gap: 1rem;
-          min-width: 220px;
+          gap: clamp(0.75rem, 2vw, 1rem);
+          min-width: clamp(200px, 25vw, 240px);
           max-height: 100vh;
           overflow-y: auto;
+          transition: all 0.3s ease;
         }
        
         .json-tool-container.dark .middle-controls {
-          background: rgba(26, 31, 46, 0.8);
-          border: 1px solid rgba(47, 51, 64, 0.3);
+          background: rgba(26, 31, 46, 0.85);
+          border: 1px solid rgba(100, 116, 139, 0.2);
         }
        
         .json-tool-container.light .middle-controls {
-          background: rgba(255, 255, 255, 0.9);
-          border: 1px solid rgba(226, 232, 240, 0.5);
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(226, 232, 240, 0.6);
         }
+        
         .controls-group {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.625rem;
           align-items: stretch;
         }
+        
         .controls-group-title {
-          font-size: 0.875rem;
-          font-weight: 600;
+          font-size: clamp(0.875rem, 1.5vw, 1rem);
+          font-weight: 700;
           color: #64748b;
           margin-bottom: 0.25rem;
           display: flex;
           align-items: center;
           gap: 0.5rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
+        
         .controls-divider {
           width: 100%;
-          height: 1px;
+          height: 2px;
           background: linear-gradient(90deg, transparent, rgba(100, 116, 139, 0.3), transparent);
           margin: 0.5rem 0;
         }
        
+        /* Enhanced Buttons */
         .btn {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          padding: 0.75rem;
-          border-radius: 0.75rem;
-          font-weight: 500;
+          padding: clamp(0.625rem, 1.5vw, 0.875rem) clamp(0.875rem, 2vw, 1.25rem);
+          border-radius: 0.875rem;
+          font-weight: 600;
           cursor: pointer;
           border: none;
-          transition: all 0.2s ease;
-          font-size: 0.875rem;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          font-size: clamp(0.8125rem, 1.5vw, 0.9375rem);
           backdrop-filter: blur(10px);
           position: relative;
           overflow: hidden;
+          white-space: nowrap;
         }
        
         .btn::before {
@@ -803,8 +860,8 @@ const JSONTool = ({
           left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-          transition: left 0.5s;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+          transition: left 0.6s;
         }
        
         .btn:hover::before {
@@ -812,47 +869,49 @@ const JSONTool = ({
         }
        
         .btn:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 30px rgba(0,0,0,0.25);
         }
        
         .btn:active:not(:disabled) {
-          transform: translateY(0);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
        
         .btn:disabled {
-          opacity: 0.5;
+          opacity: 0.4;
           cursor: not-allowed;
+          transform: none !important;
         }
        
         .btn-primary {
           background: linear-gradient(135deg, #3b82f6, #2563eb);
           color: white;
-          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
        
         .btn-secondary {
           background: linear-gradient(135deg, #64748b, #475569);
           color: white;
-          box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
+          box-shadow: 0 4px 15px rgba(100, 116, 139, 0.4);
         }
        
         .btn-danger {
           background: linear-gradient(135deg, #ef4444, #dc2626);
           color: white;
-          box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+          box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
         }
        
         .btn-success {
           background: linear-gradient(135deg, #10b981, #059669);
           color: white;
-          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
        
         .btn-warning {
           background: linear-gradient(135deg, #f59e0b, #d97706);
           color: white;
-          box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+          box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
         }
        
         .btn-toggle {
@@ -871,214 +930,195 @@ const JSONTool = ({
        
         .btn-toggle:hover:not(:disabled) {
           border-color: #3b82f6;
-          background: rgba(59, 130, 246, 0.1);
+          background: rgba(59, 130, 246, 0.15);
         }
        
         .btn-toggle.active {
           background: linear-gradient(135deg, #3b82f6, #2563eb);
           border-color: #2563eb;
           color: white;
-          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
        
         .btn-toggle.active.green {
           background: linear-gradient(135deg, #10b981, #059669);
           border-color: #059669;
-          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
+        
         .btn-icon {
-          padding: 0.5rem;
+          padding: clamp(0.5rem, 1.5vw, 0.75rem);
           min-width: auto;
         }
+        
         .file-input {
           position: absolute;
           opacity: 0;
           width: 0;
           height: 0;
         }
-        .select, .input {
-          padding: 0.5rem;
-          border-radius: 0.5rem;
-          border: 1px solid #64748b;
-          font-size: 0.875rem;
-          transition: all 0.2s ease;
+        
+        /* Enhanced Form Elements */
+        .select {
+          padding: clamp(0.5rem, 1.5vw, 0.75rem);
+          border-radius: 0.75rem;
+          border: 2px solid #64748b;
+          font-size: clamp(0.8125rem, 1.5vw, 0.9375rem);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
+          font-weight: 500;
         }
        
         .json-tool-container.dark .select,
         .json-tool-container.dark .input {
-          background: rgba(15, 20, 25, 0.8);
+          background: rgba(15, 20, 25, 0.9);
           color: #e2e8f0;
-          border-color: #2f3340;
+          border-color: rgba(100, 116, 139, 0.3);
         }
        
         .json-tool-container.light .select,
         .json-tool-container.light .input {
-          background: rgba(255, 255, 255, 0.8);
+          background: rgba(255, 255, 255, 0.9);
           color: #1e293b;
-          border-color: #d1d5db;
+          border-color: rgba(209, 213, 219, 0.5);
         }
        
         .select:focus, .input:focus {
           outline: none;
           border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+          transform: translateY(-2px);
         }
+        
+        /* Enhanced Layout */
         .main-layout {
           display: grid;
-          gap: 1rem;
+          gap: clamp(0.75rem, 2vw, 1.25rem);
           flex: 1;
           min-height: 0;
           grid-template-columns: 1fr 1fr;
         }
+        
         .main-layout.show-sidebar:not(.compare-mode) {
           grid-template-columns: 1fr auto 1fr;
         }
+        
         .main-layout.compare-mode:not(.show-sidebar) {
           grid-template-columns: 1fr 1fr 1fr;
         }
+        
         .main-layout.compare-mode.show-sidebar {
           grid-template-columns: 1fr auto 1fr 1fr;
         }
-        @media (min-width: 1201px) {
-          .main-layout {
-            grid-template-rows: 1fr;
-          }
-        }
-        @media (max-width: 1200px) {
-          .main-layout {
-            grid-template-columns: 1fr !important;
-            max-height: none;
-            flex-direction: column;
-          }
-          .middle-controls {
-            max-height: none;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-          }
-          .controls-group {
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-            flex: 1;
-            min-width: 200px;
-          }
-          .btn {
-            flex: 1 1 calc(50% - 0.5rem);
-            min-width: 120px;
-          }
-        }
-        @media (max-width: 768px) {
-          .json-tool-container {
-            padding: 0.5rem;
-          }
-          .header {
-            padding: 1rem;
-          }
-          .title {
-            font-size: 1.5rem;
-          }
-          .stats {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          .btn {
-            flex: 1 1 100%;
-          }
-        }
+        
+        /* Enhanced Panel */
         .panel {
           display: flex;
           flex-direction: column;
-          border-radius: 1.25rem;
+          border-radius: 1rem;
           overflow: hidden;
-          backdrop-filter: blur(10px);
+          backdrop-filter: blur(20px);
           box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           height: 100%;
         }
        
         .panel:hover {
-          box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+          box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+          transform: translateY(-2px);
         }
        
         .json-tool-container.dark .panel {
-          background: rgba(26, 31, 46, 0.8);
-          border: 1px solid rgba(47, 51, 64, 0.3);
+          background: rgba(26, 31, 46, 0.85);
+          border: 1px solid rgba(100, 116, 139, 0.2);
         }
        
         .json-tool-container.light .panel {
-          background: rgba(255, 255, 255, 0.9);
-          border: 1px solid rgba(226, 232, 240, 0.5);
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(226, 232, 240, 0.6);
         }
+        
         .panel-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 0.5rem 0.5rem;
-          border-bottom: 1px solid;
-          font-weight: 600;
-          background: rgba(0, 0, 0, 0.05);
+          padding: clamp(0.75rem, 2vw, 1rem);
+          border-bottom: 2px solid;
+          font-weight: 700;
+          background: rgba(0, 0, 0, 0.03);
+          gap: clamp(0.5rem, 1.5vw, 1rem);
+          flex-wrap: wrap;
         }
        
         .json-tool-container.dark .panel-header {
-          border-color: rgba(47, 51, 64, 0.3);
+          border-color: rgba(100, 116, 139, 0.25);
         }
        
         .json-tool-container.light .panel-header {
-          border-color: rgba(226, 232, 240, 0.3);
+          border-color: rgba(226, 232, 240, 0.4);
         }
+        
         .panel-title {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          font-size: 1rem;
+          font-size: clamp(0.9375rem, 2vw, 1.125rem);
         }
+        
         .status-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.25rem;
-          padding: 0.25rem 0.75rem;
-          border-radius: 0.5rem;
-          font-size: 0.75rem;
-          font-weight: 500;
+          gap: 0.375rem;
+          padding: 0.375rem 0.875rem;
+          border-radius: 0.625rem;
+          font-size: clamp(0.6875rem, 1.2vw, 0.8125rem);
+          font-weight: 700;
           color: white;
           backdrop-filter: blur(10px);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
        
         .status-badge.valid {
           background: linear-gradient(135deg, #10b981, #059669);
-          box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
        
         .status-badge.invalid {
           background: linear-gradient(135deg, #ef4444, #dc2626);
-          box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
         }
+        
         .panel-controls {
           display: flex;
-          gap: 0.5rem;
+          gap: clamp(0.375rem, 1vw, 0.5rem);
           flex-wrap: wrap;
         }
+        
         .panel-content {
           flex: 1;
           display: flex;
           flex-direction: column;
           overflow: hidden;
         }
+        
+        /* Enhanced Editor */
         .editor-container {
           position: relative;
           flex: 1;
-          overflow: scroll;
+          overflow: auto;
           max-height: 600px;
         }
+        
         .highlight-overlay {
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          padding: 1rem;
-          font-family: 'JetBrains Mono', 'Fira Code', monospace;
+          padding: clamp(0.75rem, 2vw, 1rem);
+          font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+          font-size: inherit;
           line-height: 1.6;
           white-space: pre-wrap;
           word-wrap: break-word;
@@ -1086,6 +1126,7 @@ const JSONTool = ({
           overflow: auto;
           z-index: 0;
         }
+        
         .textarea {
           position: absolute;
           top: 0;
@@ -1097,23 +1138,27 @@ const JSONTool = ({
           color: transparent;
           caret-color: currentColor;
           overflow: auto;
-          padding: 1rem;
-          font-family: 'JetBrains Mono', 'Fira Code', monospace;
+          padding: clamp(0.75rem, 2vw, 1rem);
+          font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+          font-size: inherit;
           line-height: 1.6;
           border: none;
           outline: none;
           resize: none;
         }
+        
         .textarea::placeholder {
           color: #64748b;
           opacity: 0.5;
         }
+        
         .output-area {
           flex: 1;
-          padding: 1rem;
-          font-family: 'JetBrains Mono', 'Fira Code', monospace;
+          padding: clamp(0.75rem, 2vw, 1rem);
+          font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+          font-size: inherit;
           line-height: 1.6;
-          overflow: scroll;
+          overflow: auto;
           max-height: 600px;
           background: transparent;
         }
@@ -1125,11 +1170,13 @@ const JSONTool = ({
         .json-tool-container.light .output-area {
           color: #1e293b;
         }
+        
         .output-area pre {
           margin: 0;
           white-space: pre-wrap;
           word-wrap: break-word;
         }
+        
         .empty-state {
           display: flex;
           flex-direction: column;
@@ -1138,137 +1185,155 @@ const JSONTool = ({
           height: 100%;
           color: #64748b;
           text-align: center;
-          padding: 2rem;
+          padding: clamp(1.5rem, 4vw, 2rem);
         }
+        
         .empty-icon {
-          font-size: 4rem;
+          font-size: clamp(3rem, 8vw, 4rem);
           margin-bottom: 1rem;
-          opacity: 0.5;
+          opacity: 0.4;
           animation: pulse 2s ease-in-out infinite;
         }
+        
         .error-message {
           display: flex;
           align-items: flex-start;
-          gap: 0.5rem;
-          padding: 1rem;
-          background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
-          border-top: 1px solid rgba(239, 68, 68, 0.3);
+          gap: 0.75rem;
+          padding: clamp(0.75rem, 2vw, 1rem);
+          background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+          border-top: 3px solid #ef4444;
           color: #ef4444;
-          font-size: 0.875rem;
+          font-size: clamp(0.8125rem, 1.5vw, 0.9375rem);
+          font-weight: 600;
           backdrop-filter: blur(10px);
         }
+        
+        /* Tree View Styles */
         .tree-node {
-          margin: 0.25rem 0;
+          margin: 0.375rem 0;
         }
+        
         .tree-toggle {
           display: flex;
           align-items: center;
-          gap: 0.25rem;
+          gap: 0.375rem;
           cursor: pointer;
-          padding: 0.25rem 0.5rem;
-          border-radius: 0.375rem;
+          padding: 0.375rem 0.625rem;
+          border-radius: 0.5rem;
           transition: all 0.2s ease;
           font-family: 'JetBrains Mono', monospace;
         }
        
         .tree-toggle:hover {
-          background: rgba(59, 130, 246, 0.1);
+          background: rgba(59, 130, 246, 0.15);
         }
+        
         .tree-icon {
           width: 1rem;
           height: 1rem;
           color: #3b82f6;
         }
+        
         .tree-type {
           color: #94a3b8;
-          font-weight: 600;
+          font-weight: 700;
         }
+        
         .tree-count {
           font-size: 0.75rem;
           color: #64748b;
+          font-weight: 600;
         }
+        
         .tree-children {
           margin-left: 1rem;
           border-left: 2px solid rgba(100, 116, 139, 0.3);
-          padding-left: 0.75rem;
+          padding-left: 0.875rem;
         }
+        
         .tree-entry {
           display: flex;
           align-items: flex-start;
-          margin: 0.25rem 0;
+          margin: 0.375rem 0;
           font-family: 'JetBrains Mono', monospace;
         }
+        
         .tree-key {
           color: #f97316;
           white-space: nowrap;
           cursor: pointer;
-          transition: color 0.2s ease;
+          transition: all 0.2s ease;
+          font-weight: 600;
         }
+        
         .tree-key:hover {
           color: #fb923c;
+          text-decoration: underline;
         }
+        
         .tree-key-array {
           color: #8b5cf6;
         }
+        
         .tree-colon {
           color: #94a3b8;
-          margin: 0 0.25rem;
+          margin: 0 0.375rem;
         }
+        
         .tree-comma {
           color: #94a3b8;
-          margin-left: 0.25rem;
+          margin-left: 0.375rem;
         }
        
         .tree-value-string {
           color: #10b981;
+          font-weight: 600;
         }
         .tree-value-number, .tree-value-bigint {
           color: #3b82f6;
+          font-weight: 600;
         }
         .tree-value-boolean {
           color: #8b5cf6;
+          font-weight: 700;
         }
         .tree-value-null {
           color: #64748b;
+          font-style: italic;
         }
+        
         mark {
-          background: rgba(251, 191, 36, 0.3);
+          background: rgba(251, 191, 36, 0.4);
           color: inherit;
-          padding: 0.125rem 0.25rem;
-          border-radius: 0.25rem;
+          padding: 0.125rem 0.375rem;
+          border-radius: 0.375rem;
+          font-weight: 700;
         }
-       
-        .search-icon {
-          position: absolute;
-          left: 0.75rem;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #64748b;
-          width: 1rem;
-          height: 1rem;
-        }
+        
+        /* Checkbox Styles */
         .checkbox-group {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.625rem;
           cursor: pointer;
-          padding: 0.5rem;
-          border-radius: 0.5rem;
-          transition: background-color 0.2s ease;
-          font-size: 0.875rem;
+          padding: 0.625rem;
+          border-radius: 0.75rem;
+          transition: all 0.2s ease;
+          font-size: clamp(0.8125rem, 1.5vw, 0.9375rem);
+          font-weight: 600;
         }
        
         .checkbox-group:hover {
-          background: rgba(59, 130, 246, 0.1);
+          background: rgba(59, 130, 246, 0.12);
         }
        
         .checkbox {
-          width: 1.25rem;
-          height: 1.25rem;
-          border-radius: 0.375rem;
+          width: 1.375rem;
+          height: 1.375rem;
+          border-radius: 0.5rem;
           border: 2px solid #64748b;
           position: relative;
-          transition: all 0.2s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1278,109 +1343,124 @@ const JSONTool = ({
         .checkbox.checked {
           background: linear-gradient(135deg, #3b82f6, #2563eb);
           border-color: #2563eb;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
        
         .checkbox.checked::after {
           content: '✓';
           color: white;
-          font-size: 0.875rem;
+          font-size: 1rem;
           font-weight: bold;
         }
+        
+        /* Settings Panel */
         .settings-panel {
           position: fixed;
           top: 0;
           right: 0;
-          width: 320px;
+          width: min(90vw, 360px);
           height: 100vh;
           z-index: 9998;
-          padding: 1.5rem;
+          padding: clamp(1rem, 3vw, 1.5rem);
           overflow-y: auto;
-          box-shadow: -4px 0 20px rgba(0,0,0,0.2);
+          box-shadow: -8px 0 32px rgba(0,0,0,0.3);
           transform: translateX(100%);
-          transition: transform 0.3s ease;
+          transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        
         .settings-panel.open {
           transform: translateX(0);
         }
+        
         .json-tool-container.dark .settings-panel {
           background: rgba(26, 31, 46, 0.98);
-          border-left: 1px solid rgba(47, 51, 64, 0.5);
+          border-left: 2px solid rgba(100, 116, 139, 0.3);
         }
+        
         .json-tool-container.light .settings-panel {
           background: rgba(255, 255, 255, 0.98);
-          border-left: 1px solid rgba(226, 232, 240, 0.5);
+          border-left: 2px solid rgba(226, 232, 240, 0.5);
         }
+        
         .settings-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 1.5rem;
           padding-bottom: 1rem;
-          border-bottom: 1px solid rgba(100, 116, 139, 0.3);
+          border-bottom: 2px solid rgba(100, 116, 139, 0.3);
         }
+        
         .settings-title {
-          font-size: 1.25rem;
-          font-weight: 700;
+          font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+          font-weight: 800;
         }
+        
         .slider-container {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.625rem;
         }
+        
         .slider-label {
           display: flex;
           justify-content: space-between;
-          font-size: 0.875rem;
+          font-size: clamp(0.8125rem, 1.5vw, 0.9375rem);
           color: #64748b;
+          font-weight: 600;
         }
+        
         .slider {
           width: 100%;
-          height: 6px;
-          border-radius: 3px;
+          height: 8px;
+          border-radius: 4px;
           outline: none;
           -webkit-appearance: none;
+          cursor: pointer;
         }
+        
         .json-tool-container.dark .slider {
           background: rgba(100, 116, 139, 0.3);
         }
+        
         .json-tool-container.light .slider {
           background: rgba(226, 232, 240, 0.5);
         }
+        
         .slider::-webkit-slider-thumb {
           -webkit-appearance: none;
-          width: 16px;
-          height: 16px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           background: linear-gradient(135deg, #3b82f6, #2563eb);
           cursor: pointer;
-          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+          transition: all 0.2s ease;
         }
+        
+        .slider::-webkit-slider-thumb:hover {
+          transform: scale(1.15);
+          box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
+        }
+        
         .slider::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           background: linear-gradient(135deg, #3b82f6, #2563eb);
           cursor: pointer;
           border: none;
-          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
         }
-        .footer {
-          text-align: center;
-          margin-top: 2rem;
-          padding: 1.5rem;
-          color: #64748b;
-          font-size: 0.875rem;
-          border-top: 1px solid rgba(100, 116, 139, 0.2);
-          background: rgba(0, 0, 0, 0.02);
-          border-radius: 1.25rem;
-          backdrop-filter: blur(10px);
-        }
-        .json-key { color: #f97316; font-weight: 600; }
-        .json-number { color: #3b82f6; }
-        .json-boolean { color: #8b5cf6; }
-        .json-null { color: #64748b; }
-        .json-string { color: #10b981; }
-        .json-punct { color: #94a3b8; }
+        
+        /* Syntax Highlighting */
+        .json-key { color: #f97316; font-weight: 700; }
+        .json-number { color: #3b82f6; font-weight: 600; }
+        .json-boolean { color: #8b5cf6; font-weight: 700; }
+        .json-null { color: #64748b; font-style: italic; }
+        .json-string { color: #10b981; font-weight: 600; }
+        .json-punct { color: #94a3b8; font-weight: 600; }
+        
         .line-number {
           display: inline-block;
           width: 3em;
@@ -1388,50 +1468,134 @@ const JSONTool = ({
           text-align: right;
           margin-right: 1em;
           user-select: none;
+          font-weight: 600;
+          opacity: 0.6;
         }
+        
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
+          width: 10px;
+          height: 10px;
         }
        
         ::-webkit-scrollbar-track {
           background: rgba(100, 116, 139, 0.1);
-          border-radius: 4px;
+          border-radius: 5px;
         }
        
         ::-webkit-scrollbar-thumb {
           background: linear-gradient(135deg, #64748b, #475569);
-          border-radius: 4px;
+          border-radius: 5px;
+          transition: background 0.2s ease;
         }
        
         ::-webkit-scrollbar-thumb:hover {
           background: linear-gradient(135deg, #475569, #334155);
         }
+        
         @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.98); }
         }
+        
         .mobile-menu-btn {
           display: none;
         }
+        
+        /* Responsive Design */
         @media (max-width: 1200px) {
+          .main-layout {
+            grid-template-columns: 1fr !important;
+          }
+          
           .mobile-menu-btn {
             display: flex;
           }
+          
           .middle-controls {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
+            width: min(90vw, 360px);
             height: 100vh;
             z-index: 9997;
             transform: translateX(-100%);
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 32px rgba(0,0,0,0.3);
           }
+          
           .middle-controls.open {
             transform: translateX(0);
           }
         }
+        
+        @media (max-width: 768px) {
+          .json-tool-container {
+            padding: 0.5rem;
+          }
+          
+          .header {
+            padding: 1rem;
+          }
+          
+          .title {
+            font-size: 1.5rem;
+          }
+          
+          .stats {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          
+          .panel-header {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          
+          .panel-controls {
+            justify-content: center;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .stats {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+          }
+          
+          .stat-value {
+            font-size: 1.25rem;
+          }
+          
+          .btn {
+            padding: 0.625rem 0.875rem;
+            font-size: 0.8125rem;
+          }
+          
+          .panel-title span {
+            display: none;
+          }
+          
+          .editor-container,
+          .output-area {
+            font-size: 0.75rem;
+          }
+        }
+        
+        /* Touch Device Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+          .btn,
+          .checkbox-group,
+          .tree-toggle {
+            min-height: 44px;
+            padding: 0.75rem 1rem;
+          }
+          
+          .btn-icon {
+            min-width: 44px;
+            min-height: 44px;
+          }
+        }
+        
         .minimap {
           position: absolute;
           right: 0;
@@ -1443,19 +1607,11 @@ const JSONTool = ({
           opacity: 0.3;
           z-index: 2;
         }
+        
         .minimap pre {
           transform: scale(0.2);
           transform-origin: top right;
           white-space: pre;
-        }
-        .diff-added {
-          background: rgba(16, 185, 129, 0.2);
-        }
-        .diff-removed {
-          background: rgba(239, 68, 68, 0.2);
-        }
-        .diff-modified {
-          background: rgba(245, 158, 11, 0.2);
         }
       `}</style>
         {notification && (
@@ -1726,14 +1882,6 @@ const JSONTool = ({
                   <Expand size={16} />
                 </button>
                 <button
-                  onClick={copyToClipboard}
-                  disabled={!output}
-                  className="btn btn-secondary btn-icon"
-                  title="Copy Output"
-                >
-                  <Copy size={16} />
-                </button>
-                <button
                   onClick={downloadJSON}
                   disabled={!output}
                   className="btn btn-success btn-icon"
@@ -1888,7 +2036,6 @@ const JSONTool = ({
             </div>
           </div>
         )}
-        <div className="footer">© 2025 Developer Tools Hub - JSON Tool</div>
       </div>
     </>
   );

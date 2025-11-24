@@ -1,20 +1,18 @@
-import React from 'react';
-import { Moon, Sun } from 'lucide-react';
-import './Header.css';
+import React from "react";
+import { Moon, Sun } from "lucide-react";
+import "./Header.css";
 
 const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
-  const tabs = ['JSON', 'JWT', 'Base64'];
+  const tabs = ["JSON", "JWT", "Base64"];
 
   return (
-    <header className={`header-com ${isDarkMode ? 'header-dark' : 'header-light'}`}>
+    <header
+      className={`header-com ${isDarkMode ? "header-dark" : "header-light"}`}
+    >
       <div className="header-container">
         {/* Left Section */}
         <div className="header-left">
-          <div className="header-nav-icons">
-            {/* <ChevronLeft className="nav-icon" />
-            <ChevronRight className="nav-icon" /> */}
-          </div>
-          <h1 className={`header-title ${isDarkMode ? 'dark' : 'light'}`}>Developer Tools Hub</h1>
+          <h1 className="header-title">Developer Tools Hub</h1>
         </div>
 
         {/* Right Section */}
@@ -24,12 +22,13 @@ const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`tab-button ${activeTab === tab
-                  ? 'tab-active'
-                  : isDarkMode
-                    ? 'tab-dark'
-                    : 'tab-light'
-                  }`}
+                className={`tab-button ${
+                  activeTab === tab
+                    ? "tab-active"
+                    : isDarkMode
+                    ? "tab-dark"
+                    : "tab-light"
+                }`}
               >
                 {tab}
               </button>
@@ -38,7 +37,10 @@ const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
 
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`dark-toggle ${isDarkMode ? 'dark-toggle-active' : ''}`}
+            className={`dark-toggle ${isDarkMode ? "dark-toggle-active" : ""}`}
+            aria-label={
+              isDarkMode ? "Switch to light mode" : "Switch to dark mode"
+            }
           >
             {isDarkMode ? <Sun className="icon" /> : <Moon className="icon" />}
           </button>
