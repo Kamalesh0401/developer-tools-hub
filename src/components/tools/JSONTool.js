@@ -171,7 +171,6 @@ const JSONTool = ({
   };
 
   const handleFormat = () => {
-    setIsTreeMode(false);
     if (!validateJSON(input)) {
       setError("Invalid JSON");
       showNotification("Invalid JSON format", "error");
@@ -196,6 +195,7 @@ const JSONTool = ({
       return;
     }
     try {
+      setIsTreeMode(false);
       const minified = minifyJSON(input);
       setOutput(minified);
       setError("");
@@ -378,78 +378,63 @@ const JSONTool = ({
   const renderTreeView = (obj, path = "", depth = 0) => {
     if (typeof obj !== "object" || obj === null) {
       let valueType = typeof obj;
-      let value = typeof obj === "string" ? `"${obj}"` : String(obj);
-      if (typeof obj === "bigint") {
-        value = `${obj}n`;
-        valueType = "bigint";
-      } else if (obj === null) {
-        value = "null";
+      let value = typeof obj === "string" ? `${obj}` : String(obj);
+
+      if (obj === null) {
         valueType = "null";
-      } else if (valueType === "boolean") {
-        value = obj ? "true" : "false";
+        value = "null";
       }
-      const highlighted =
-        searchTerm && value.toLowerCase().includes(searchTerm.toLowerCase())
-          ? value.replace(
-              new RegExp(`(${searchTerm})`, "gi"),
-              "<mark>$1</mark>"
-            )
-          : value;
+
+      const highlightedValue = highlightSearch(value, searchTerm);
+
       return (
         <span
           className={`tree-value tree-value-${valueType}`}
-          title={`Type: ${valueType}`}
-          dangerouslySetInnerHTML={{ __html: highlighted }}
+          dangerouslySetInnerHTML={{ __html: highlightedValue }}
         />
       );
     }
+
     const isExpanded = treeView[path] ?? true;
     const isArray = Array.isArray(obj);
-    const entries = isArray
-      ? obj.map((value, index) => [index.toString(), value])
-      : Object.entries(obj);
-    const nodeType = isArray ? "array" : "object";
+    const entries = isArray ? obj.map((v, i) => [i, v]) : Object.entries(obj);
+
     return (
-      <div className="tree-node" style={{ marginLeft: `${depth * 1}rem` }}>
-        <div
-          className="tree-toggle"
-          onClick={() => toggleTreeNode(path)}
-          role="button"
-          aria-expanded={isExpanded}
-          tabIndex={0}
-        >
-          {isExpanded ? (
-            <ChevronDown className="tree-icon" />
-          ) : (
-            <ChevronRight className="tree-icon" />
-          )}
-          <span className="tree-type">{nodeType}</span>
-          <span className="tree-count">({entries.length})</span>
+      <div className="tree-node" style={{ marginLeft: depth * 16 }}>
+        {/* ===== HEADER ===== */}
+        <div className="tree-toggle" onClick={() => toggleTreeNode(path)}>
+          <span className="tree-arrow">{isExpanded ? "▼" : "▶"}</span>
+
+          <span className="tree-node-type">
+            {isArray
+              ? `Array [${entries.length}]`
+              : `Object {${entries.length}}`}
+          </span>
         </div>
+
+        {/* ===== CHILDREN ===== */}
         {isExpanded && (
           <div className="tree-children">
-            {entries.map(([key, value], idx) => {
-              const keyStr = isArray ? key : `"${key}"`;
-              const highlightedKey =
-                searchTerm &&
-                key.toLowerCase().includes(searchTerm.toLowerCase())
-                  ? keyStr.replace(
-                      new RegExp(`(${searchTerm})`, "gi"),
-                      "<mark>$1</mark>"
-                    )
-                  : keyStr;
+            {entries.map(([key, value]) => {
+              const currentPath = path ? `${path}.${key}` : key;
+
               return (
-                <div key={`${path}-${key}`} className="tree-entry">
-                  <span
-                    className={`tree-key ${isArray ? "tree-key-array" : ""}`}
-                    dangerouslySetInnerHTML={{ __html: highlightedKey }}
-                    onClick={() => copyToClipboard(key)}
-                  />
-                  {!isArray && <span className="tree-colon">: </span>}
-                  {renderTreeView(value, `${path}.${key}`, depth + 1)}
-                  {idx < entries.length - 1 && (
-                    <span className="tree-comma">,</span>
+                <div key={currentPath} className="tree-entry">
+                  {/* === KEY WITH SEARCH HIGHLIGHT === */}
+                  {!isArray && (
+                    <span
+                      className="tree-key"
+                      onClick={() => copyToClipboard(key)}
+                      dangerouslySetInnerHTML={{
+                        __html: highlightSearch(String(key), searchTerm),
+                      }}
+                    />
                   )}
+
+                  {!isArray && <span className="tree-colon">:</span>}
+
+                  {/* === VALUE === */}
+                  {renderTreeView(value, currentPath, depth + 1)}
                 </div>
               );
             })}
@@ -471,8 +456,13 @@ const JSONTool = ({
 
   const highlightSearch = (text) => {
     if (!searchTerm || !text) return text;
-    const regex = new RegExp(`(${searchTerm})`, "gi");
-    return text.replace(regex, "<mark>$1</mark>");
+
+    const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    // Match full word containing the search term
+    const regex = new RegExp(`\\b\\w*${escapedTerm}\\w*\\b`, "gi");
+
+    return text.replace(regex, "<mark>$&</mark>");
   };
 
   const highlightJSON = (json) => {
@@ -1209,107 +1199,153 @@ const JSONTool = ({
         }
         
         /* Tree View Styles */
-        .tree-node {
-          margin: 0.375rem 0;
-        }
-        
-        .tree-toggle {
-          display: flex;
-          align-items: center;
-          gap: 0.375rem;
-          cursor: pointer;
-          padding: 0.375rem 0.625rem;
-          border-radius: 0.5rem;
-          transition: all 0.2s ease;
-          font-family: 'JetBrains Mono', monospace;
-        }
-       
-        .tree-toggle:hover {
-          background: rgba(59, 130, 246, 0.15);
-        }
-        
-        .tree-icon {
-          width: 1rem;
-          height: 1rem;
-          color: #3b82f6;
-        }
-        
-        .tree-type {
-          color: #94a3b8;
-          font-weight: 700;
-        }
-        
-        .tree-count {
-          font-size: 0.75rem;
-          color: #64748b;
-          font-weight: 600;
-        }
-        
-        .tree-children {
-          margin-left: 1rem;
-          border-left: 2px solid rgba(100, 116, 139, 0.3);
-          padding-left: 0.875rem;
-        }
-        
-        .tree-entry {
-          display: flex;
-          align-items: flex-start;
-          margin: 0.375rem 0;
-          font-family: 'JetBrains Mono', monospace;
-        }
-        
-        .tree-key {
-          color: #f97316;
-          white-space: nowrap;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          font-weight: 600;
-        }
-        
-        .tree-key:hover {
-          color: #fb923c;
-          text-decoration: underline;
-        }
-        
-        .tree-key-array {
-          color: #8b5cf6;
-        }
-        
-        .tree-colon {
-          color: #94a3b8;
-          margin: 0 0.375rem;
-        }
-        
-        .tree-comma {
-          color: #94a3b8;
-          margin-left: 0.375rem;
-        }
-       
-        .tree-value-string {
-          color: #10b981;
-          font-weight: 600;
-        }
-        .tree-value-number, .tree-value-bigint {
-          color: #3b82f6;
-          font-weight: 600;
-        }
-        .tree-value-boolean {
-          color: #8b5cf6;
-          font-weight: 700;
-        }
-        .tree-value-null {
-          color: #64748b;
-          font-style: italic;
-        }
-        
-        mark {
-          background: rgba(251, 191, 36, 0.4);
-          color: inherit;
-          padding: 0.125rem 0.375rem;
-          border-radius: 0.375rem;
-          font-weight: 700;
-        }
-        
+        /* ================= TREE ROOT ================= */
+          .tree-container {
+            flex: 1;
+            overflow: auto;
+            padding: 10px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            background: #f8fafc;
+          }
+
+          /* Dark mode */
+          .json-tool-container.dark .tree-container {
+            background: #0f172a;
+            color: #e2e8f0;
+          }
+
+          /* Scrollbar */
+          .tree-container::-webkit-scrollbar {
+            width: 8px;
+          }
+          .tree-container::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+          }
+
+          /* ================= NODE HEADER ================= */
+          .tree-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 5px;
+            transition: background 0.2s ease;
+            user-select: none;
+            font-weight: 500;
+          }
+
+          .tree-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+          }
+
+          /* Expand arrow */
+          .tree-arrow {
+            width: 15px;
+            font-size: 12px;
+            text-align: center;
+            color: #475569;
+          }
+
+          /* Node labels */
+          .tree-node-type {
+            font-weight: 600;
+            color: #334155;
+          }
+
+          .json-tool-container.dark .tree-node-type {
+            color: #93c5fd;
+          }
+
+          /* ================= STRUCTURE LINES ================= */
+          .tree-children {
+            margin-left: 12px;
+            padding-left: 10px;
+            border-left: 1px solid #cbd5e1;
+          }
+
+          /* ================= ENTRY ================= */
+          .tree-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            padding: 2px 0;
+            flex-wrap: wrap;
+          }
+
+          /* ================= KEYS ================= */
+          .tree-key {
+            color: #282829ff;
+            font-weight: 500;
+            cursor: pointer;
+          }
+
+          .tree-key:hover {
+            text-decoration: underline;
+          }
+
+          /* ================= SYMBOLS ================= */
+          .tree-colon, 
+          .tree-comma {
+            color: #64748b;
+          }
+
+          /* ================= VALUES ================= */
+          .tree-value {
+            word-break: break-word;
+          }
+
+          .tree-value-string {
+            color: #282829ff;
+          }
+
+          .tree-value-number {
+            color: #282829ff;
+          }
+
+          .tree-value-boolean {
+            color: #282829ff;
+            font-weight: 600;
+          }
+
+          .tree-value-null {
+            color:#282829ff;
+            font-style: italic;
+          }
+
+          /* ================= SEARCH HIGHLIGHT ================= */
+          mark {
+            background: #fde68a;
+            padding: 1px 4px;
+            border-radius: 4px;
+          }
+
+          /* ================= MOBILE RESPONSIVE ================= */
+          @media (max-width: 768px) {
+            .tree-container {
+              font-size: 12px;
+            }
+
+            .tree-entry {
+              flex-direction: column;
+            }
+
+            .tree-toggle {
+              padding: 5px;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .tree-container {
+              font-size: 11px;
+            }
+          }
+
+
+      
         /* Checkbox Styles */
         .checkbox-group {
           display: flex;
@@ -1760,7 +1796,10 @@ const JSONTool = ({
                   Quick Actions
                 </div>
                 <button
-                  onClick={handleFormat}
+                  onClick={() => {
+                    setIsTreeMode(false);
+                    if (!isTreeMode && input) handleFormat();
+                  }}
                   disabled={!input || !isValid}
                   className="btn btn-primary"
                 >
@@ -1777,12 +1816,10 @@ const JSONTool = ({
                 </button>
                 <button
                   onClick={() => {
-                    setIsTreeMode(!isTreeMode);
+                    setIsTreeMode(true);
                     if (!isTreeMode && input) handleFormat();
                   }}
-                  className={`btn btn-toggle ${
-                    isTreeMode ? "active green" : ""
-                  }`}
+                  className={`btn btn-toggle active green`}
                 >
                   <FileText size={16} />
                   Tree View
@@ -1861,18 +1898,20 @@ const JSONTool = ({
             <div className="panel-header">
               <div className="panel-title">
                 <FileText size={18} />
-                <span>Output {isTreeMode ? "(Tree View)" : ""}</span>
+                <span>Output</span>
               </div>
               <div className="panel-controls">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Search JSON..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="input"
-                  />
-                </div>
+                {isTreeMode && (
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Search JSON..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="input"
+                    />
+                  </div>
+                )}
                 <button
                   onClick={expanAllFields}
                   disabled={!output}
@@ -1907,15 +1946,15 @@ const JSONTool = ({
               {output ? (
                 isTreeMode ? (
                   <div className="output-area">
-                    {renderTreeView(parseJSON(output))}
+                    <div className="tree-container">
+                      {renderTreeView(parseJSON(output))}
+                    </div>
                   </div>
                 ) : (
                   <div className="output-area">
                     <pre
                       dangerouslySetInnerHTML={{
-                        __html: highlightJSON(
-                          highlightSearch(addLineNumbers(output))
-                        ),
+                        __html: highlightJSON(addLineNumbers(output)),
                       }}
                     />
                   </div>

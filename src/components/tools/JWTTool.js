@@ -351,23 +351,25 @@ const JWTTool = ({
 
         /* Stats */
         .stats {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 1rem;
-          margin-bottom: 2rem;
-          padding: 1.5rem;
-          border-radius: 0.75rem;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+           display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(clamp(100px, 20vw, 140px), 1fr));
+          gap: clamp(0.75rem, 2vw, 1rem);
+          margin-bottom: clamp(0.75rem, 2vw, 1.5rem);
+          margin-top: clamp(0.75rem, 2vw, 1.5rem);
+          padding: clamp(0.75rem, 2vw, 1rem);
+          border-radius: 1rem;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
         }
         
         .jwt-tool-container.dark .stats {
-          background-color: #1e293b;
-          border: 1px solid #334155;
+          background: rgba(26, 31, 46, 0.85);
+          border: 1px solid rgba(100, 116, 139, 0.2);
         }
         
         .jwt-tool-container.light .stats {
-          background-color: white;
-          border: 1px solid #e2e8f0;
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(226, 232, 240, 0.6);
         }
         
         .stat-item {
@@ -831,42 +833,6 @@ const JWTTool = ({
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="stats">
-            <div className="stat-item">
-              <div className="stat-value blue">{stats.totalSize}</div>
-              <div className="stat-label">Total Size</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value purple">{stats.headerSize}</div>
-              <div className="stat-label">Header</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value green">{stats.payloadSize}</div>
-              <div className="stat-label">Payload</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value orange">{stats.signatureSize}</div>
-              <div className="stat-label">Signature</div>
-            </div>
-            <div className="stat-item">
-              <div
-                className={`stat-value ${
-                  isValid ? (expired ? "orange" : "green") : "red"
-                }`}
-              >
-                {!token.trim()
-                  ? "Empty"
-                  : isValid
-                  ? expired
-                    ? "Expired"
-                    : "Valid"
-                  : "Invalid"}
-              </div>
-              <div className="stat-label">Status</div>
-            </div>
-          </div>
-
           {/* Controls */}
           <div className="controls">
             <button onClick={clearAll} className="btn btn-danger">
@@ -1132,6 +1098,42 @@ const JWTTool = ({
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Stats */}
+          <div className="stats">
+            <div className="stat-item">
+              <div className="stat-value blue">{stats.totalSize}</div>
+              <div className="stat-label">Total Size</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value purple">{stats.headerSize}</div>
+              <div className="stat-label">Header</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value green">{stats.payloadSize}</div>
+              <div className="stat-label">Payload</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value orange">{stats.signatureSize}</div>
+              <div className="stat-label">Signature</div>
+            </div>
+            <div className="stat-item">
+              <div
+                className={`stat-value ${
+                  isValid ? (expired ? "orange" : "green") : "red"
+                }`}
+              >
+                {!token.trim()
+                  ? "Empty"
+                  : isValid
+                  ? expired
+                    ? "Expired"
+                    : "Valid"
+                  : "Invalid"}
+              </div>
+              <div className="stat-label">Status</div>
+            </div>
           </div>
 
           {/* Info Section */}

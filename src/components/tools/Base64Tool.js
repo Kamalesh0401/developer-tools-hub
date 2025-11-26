@@ -18,9 +18,7 @@ const Base64Tool = ({
   isDarkMode = true,
   showNotification: externalShowNotification,
 }) => {
-  const [input, setInput] = useState(
-    "Hello, World! This is a sample text for Base64 encoding."
-  );
+  const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [inputType, setInputType] = useState("text");
   const [outputType, setOutputType] = useState("text");
@@ -309,26 +307,28 @@ const Base64Tool = ({
         }
 
         /* Stats */
-        .stats {
+       .stats {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 1rem;
-          margin-bottom: 2rem;
-          padding: 1.5rem;
-          border-radius: 0.75rem;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          grid-template-columns: repeat(auto-fit, minmax(clamp(100px, 20vw, 140px), 1fr));
+          gap: clamp(0.75rem, 2vw, 1rem);
+          margin-bottom: clamp(0.75rem, 2vw, 1.5rem);
+          margin-top: clamp(0.75rem, 2vw, 1.5rem);
+          padding: clamp(0.75rem, 2vw, 1rem);
+          border-radius: 1rem;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
         }
         
         .base64-tool-container.dark .stats {
-          background-color: #1e293b;
-          border: 1px solid #334155;
+          background: rgba(26, 31, 46, 0.85);
+          border: 1px solid rgba(100, 116, 139, 0.2);
         }
-        
+       
         .base64-tool-container.light .stats {
-          background-color: white;
-          border: 1px solid #e2e8f0;
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(226, 232, 240, 0.6);
         }
-        
+
         .stat-item {
           text-align: center;
         }
@@ -737,47 +737,6 @@ const Base64Tool = ({
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="stats">
-            <div className="stat-item">
-              <div className="stat-value blue">{stats.inputSize}</div>
-              <div className="stat-label">Input Bytes</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value green">{stats.outputSize}</div>
-              <div className="stat-label">Output Bytes</div>
-            </div>
-            <div className="stat-item">
-              <div
-                className={`stat-value ${
-                  stats.difference > 0
-                    ? "red"
-                    : stats.difference < 0
-                    ? "green"
-                    : "purple"
-                }`}
-              >
-                {stats.difference > 0 ? "+" : ""}
-                {stats.difference}
-              </div>
-              <div className="stat-label">Difference</div>
-            </div>
-            <div className="stat-item">
-              <div
-                className={`stat-value ${
-                  inputType === "base64" ? (isValid ? "green" : "red") : "blue"
-                }`}
-              >
-                {inputType === "base64"
-                  ? isValid
-                    ? "✓"
-                    : "✗"
-                  : inputType.charAt(0).toUpperCase() + inputType.slice(1)}
-              </div>
-              <div className="stat-label">Input Type</div>
-            </div>
-          </div>
-
           {/* Controls */}
           <div className="controls">
             <button
@@ -873,7 +832,7 @@ const Base64Tool = ({
                   className="textarea"
                 />
 
-                {input && (
+                {/* {input && (
                   <div className="analysis">
                     <div className="analysis-title">Input Analysis</div>
                     <div className="analysis-item">
@@ -905,7 +864,7 @@ const Base64Tool = ({
                       </div>
                     )}
                   </div>
-                )}
+                )} */}
               </div>
             </div>
 
@@ -957,18 +916,18 @@ const Base64Tool = ({
                     </pre>
                   ) : (
                     <div className="empty-state">
-                      <div className="empty-icon">🔄</div>
+                      {/* <div className="empty-icon">🔄</div>
                       <div>Encoded/Decoded result will appear here</div>
                       <div
                         style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}
                       >
                         Use Encode or Decode buttons
-                      </div>
+                      </div> */}
                     </div>
                   )}
                 </div>
 
-                {output && (
+                {/* {output && (
                   <div className="analysis">
                     <div className="analysis-title">Output Analysis</div>
                     <div className="analysis-item">
@@ -1010,8 +969,49 @@ const Base64Tool = ({
                       </span>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="stats">
+            <div className="stat-item">
+              <div className="stat-value blue">{stats.inputSize}</div>
+              <div className="stat-label">Input Bytes</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value green">{stats.outputSize}</div>
+              <div className="stat-label">Output Bytes</div>
+            </div>
+            <div className="stat-item">
+              <div
+                className={`stat-value ${
+                  stats.difference > 0
+                    ? "red"
+                    : stats.difference < 0
+                    ? "green"
+                    : "purple"
+                }`}
+              >
+                {stats.difference > 0 ? "+" : ""}
+                {stats.difference}
+              </div>
+              <div className="stat-label">Difference</div>
+            </div>
+            <div className="stat-item">
+              <div
+                className={`stat-value ${
+                  inputType === "base64" ? (isValid ? "green" : "red") : "blue"
+                }`}
+              >
+                {inputType === "base64"
+                  ? isValid
+                    ? "✓"
+                    : "✗"
+                  : inputType.charAt(0).toUpperCase() + inputType.slice(1)}
+              </div>
+              <div className="stat-label">Input Type</div>
             </div>
           </div>
 
