@@ -1,6 +1,6 @@
 # Developer Tools Hub 🛠️ 
 
-Hosted Link: [https://kamalesh0401.github.io/developer-tools-hub/](https://developer-tools-hub.netlify.app/json-viewer)
+Hosted Link: [Developer Tools Hub](https://developer-tools-hub.netlify.app/json-viewer)
 
 A comprehensive collection of essential developer tools built with React. This application provides JSON formatting, JWT decoding, and Base64 encoding/decoding capabilities with a modern, user-friendly interface.
 
